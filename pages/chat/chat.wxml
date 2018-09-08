@@ -1,0 +1,21 @@
+<!--pages/chat/chat.wxml-->
+<view class='page'>
+  <view class="{{hidden ? 'chat-input hide' : 'chat-input'}}">
+    <input placeholder="" 
+    confirm-type='send'
+    bindconfirm='send' 
+    value="{{inputValue}}"  focus="{{focus}}" />
+  </view>
+  <view class='bg' bindtap='chatBlur'>
+    <view class='msg-list'>
+      <view class='msg' wx:for="{{messageArr}}" wx:key="{{item.time}}">
+        {{item.text}}
+      </view>
+    </view>
+  </view>
+
+  <view class='btn-block'>
+    <image class='mode' src='/images/mode.png'></image>  
+    <image class='chat' bindtap='chatInput' src='/images/chat.png'></image> 
+  </view>
+</view>

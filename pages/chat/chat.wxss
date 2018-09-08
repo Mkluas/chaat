@@ -1,0 +1,51 @@
+/* pages/chat/chat.wxss */
+
+.hide {
+  display: none;
+}
+
+.chat-input {
+  position: fixed;
+  top: 20vh;
+  width: 100vw;
+  height: 10vh;
+  text-align: center;
+  color: #6036AA;
+}
+
+.chat-input input {
+  height: 10vh;
+  line-height: 10vh;
+  font-size: 8vh;
+}
+
+.bg {
+  /* background-color: gold; */
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.msg-list {
+  padding: 0 5vw;
+}
+
+.msg {
+  margin-bottom: 5px;
+}
+
+.btn-block {
+  position: fixed;
+  bottom: 6vw;
+  width: 100vw;
+  height: 15vw;
+}
+
+.btn-block image {
+  width: 15vw;
+  height: 15vw;
+  padding: 0 6vw;
+}
+
+.chat {
+  float: right;
+}

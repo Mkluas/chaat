@@ -1,0 +1,8 @@
+<!--index.wxml-->
+<view class="page">
+  <text class='welcome'>欢迎使用 SGNL</text>
+  <text class='tip'>请点击下方按钮开始会话</text>
+  <button open-type='share'>
+    <image class='create'  src='/images/create.png'></image> 
+  </button>
+</view>

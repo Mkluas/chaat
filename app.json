@@ -1,0 +1,28 @@
+{
+  "pages":[
+    "pages/index/index",
+    "pages/chat/chat",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/recentchat/recentchat",
+    "pages/contact/contact",
+    "pages/setting/setting",
+    "partials/modify/modify",
+    "partials/addfriend/addfriend",
+    "partials/strangercard/strangercard",
+    "partials/personcard/personcard",
+    "partials/messagenotification/messagenotification",
+    "partials/historyfromcloud/historyfromcloud",
+    "partials/blacklist/blacklist",
+    "partials/chating/chating",
+    "partials/forwardcontact/forwardcontact",
+    "components/emoji/emoji",
+    "components/inputclear/inputclear"
+  ],
+  "window":{
+    "backgroundColor": "#fff",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "",
+    "navigationBarTextStyle":"black"
+  }
+}

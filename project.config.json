@@ -1,0 +1,55 @@
+{
+	"description": "项目配置文件。",
+	"setting": {
+		"urlCheck": false,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"libVersion": "1.9.1",
+	"appid": "wx0a5169a0117b8106",
+	"projectname": "chaat",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": 1,
+			"list": [
+				{
+					"id": -1,
+					"name": "主界面下拉",
+					"pathName": "pages/recentchat/recentchat",
+					"query": "",
+					"scene": "1089"
+				},
+				{
+					"id": 1,
+					"name": "shareTicket 群0",
+					"pathName": "pages/chat/chat",
+					"query": "userId=7",
+					"scene": "1044",
+					"shareInfo": {
+						"groupName": "测试模拟群0",
+						"shareName": "CdR0CUgxTwJNmbi6Vn_VDgwfNJl0Fi8QDHaR707rZFU@cr4dev",
+						"shareKey": "a_QHt9W6IDBM1RzV_6UILXrU-OSNozj_iDmVtmdLPXZvFNFp0BOsS6_JOiVo854oNWg2VPuSekTDdQ2Y6XBSOg~~"
+					}
+				}
+			]
+		}
+	}
+}

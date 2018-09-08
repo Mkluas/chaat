@@ -1,0 +1,26 @@
+/**index.wxss**/
+
+.welcome {
+  display: block;
+  text-align: center;
+  font-size: 10vw;
+  margin-top: 15vh;
+}
+
+.tip {
+  position: fixed;
+  bottom: 30vw;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  text-align: center;
+  color: #6036AA;
+}
+
+.create {
+  position: fixed;
+  bottom: 8vw;
+  left: 42.5vw;
+  width: 15vw;
+  height: 15vw;
+}
