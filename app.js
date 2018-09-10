@@ -20,15 +20,14 @@ App({
       wx.checkSession({
         success: function () {
           if (app.globalData.tokenInfo) {
-            app.doLogin(app.connectNIM);
-            // request.get({
-            //   app: app,
-            //   url: "/ma/user/token/check",
-            //   success: function () {
-            //     app.globalData.login = true;
-            //     app.connectNIM();
-            //   }
-            // });
+            request.get({
+              app: app,
+              url: "/ma/user/token/check",
+              success: function () {
+                app.globalData.login = true;
+                app.connectNIM();
+              }
+            });
           } else {
             app.doLogin(app.connectNIM);
           }
@@ -43,7 +42,7 @@ App({
 
   fetchTeamId(options) {
     var app = this;
-    if (options['shareTicket'] && options['shareTicket'] != app.globalData.shareTicket) {
+    if (options['shareTicket']) {
       var shareTicket = options['shareTicket'];
       wx.getShareInfo({
         shareTicket: shareTicket,
@@ -54,7 +53,6 @@ App({
             url: "/ma/group/decrypt",
             data: res,
             success: function (d) {
-              console.log('decrypt', d);
               app.globalData.shareTicket = shareTicket;
               app.globalData.group = d.group;
               wx.setStorage({key: 'shareTicket',data: shareTicket})
@@ -66,11 +64,7 @@ App({
         }
       })
     } else {
-      if (options['shareTicket']) {
-        console.log("same group", app.globalData.group)
-      } else {
-        console.log('shareTicket is null')
-      }
+      console.log('shareTicket is null')
     }
   },
 

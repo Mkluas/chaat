@@ -21,9 +21,9 @@ Page({
    */
   onShareAppMessage: function () {
     return {
-      title: 'hello',
+      title: 'sgnl',
       path: '/pages/chat/chat?userId=' + app.globalData.tokenInfo.userId,
-      imageUrl: '/images/chat.png',
+      // imageUrl: '/images/chat.png',
       success: function() {
         console.log('info', app.globalData.tokenInfo)
       }

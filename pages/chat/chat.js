@@ -12,6 +12,9 @@ Page({
    * 页面的初始数据
    */
   data: {
+    hasTeamId: false,
+    teamId: 0,
+    syncFinish: false,
     inputValue: '',
     focus: false,
     hidden: true,
@@ -51,14 +54,20 @@ Page({
     console.log(options);
     var self = this;
     app.globalData.subscriber.on('SYNC_DONE', () => {
-      console.log('sync finish!');
-      console.log(app.globalData.group)
+      self.doLoad({ 'chatTo': '1382627093'})
+
+      // self.setData({syncFinish: true})
+      // console.log('sync finish!');
+      // if (self.data.hasTeamId) {
+      //   self.doLoad({ 'chatTo': self.data.teamId })
+      // }
     })
-    app.globalData.subscriber.on('TEAM_ID', (teamId) => {
-      console.log('teamId', teamId);
-      self.doLoad({'chatTo': teamId})
-      self.sendRequest("hello")
-      self.sendRequest("hello3")
+    app.globalData.subscriber.on('TEAM_ID', (tid) => {
+      self.setData({ hasTeamId: true, teamId: tid })
+      console.log('teamId', tid);
+      if (self.data.syncFinish) {
+        self.doLoad({ 'chatTo': tid })
+      }
     })
   },
 
@@ -428,7 +437,7 @@ Page({
       app.globalData.recentChatList[self.data.chatTo][time]['displayTimeHeader'] = displayTimeHeader
 
       // 滚动到页面底部
-      self.scrollToBottom()
+      // self.scrollToBottom()
     })
   },
 

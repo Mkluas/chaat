@@ -348,7 +348,7 @@ export default class IMEventHandler {
     // if (msg['scene'] && msg['scene'] !== 'p2p') {
     //   return
     // }
-    // console.log('onMsg')
+    console.log('onMsg', msg)
     // console.log(msg)
     let accountMsgList = app.globalData.messageList[app.globalData.loginUser.account]
     // {account: {time: {from,to,type,scene,text,sendOrReceive}}}
@@ -633,7 +633,7 @@ export default class IMEventHandler {
    * {scene:"team",sessionId:"team-3944051",timetag:,to:"3944051",msgs:[{from:'wujie',text:'222',to:'cs4'}]}
    */
   onRoamingMsgs(obj) {
-    // console.log('onRoamingMsgs',obj)
+    console.log('onRoamingMsgs',obj)
     if(obj.scene != 'p2p') {
       return
     }
@@ -716,8 +716,10 @@ export default class IMEventHandler {
    * {scene,timetag,to,sessionId:'p2p-zys1',msgs:[{}]}
    */
   onOfflineMsgs(obj) {
+    console.log('onOfflineMsgs');
     let {to, scene, msgs} = obj
     if (scene != 'p2p') { // 暂时不处理其他类型消息
+      console.log(msgs);
       return
     }
     let accountMsgList = app.globalData.messageList[app.globalData.loginUser.account]
