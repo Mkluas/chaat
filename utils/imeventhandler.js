@@ -568,10 +568,11 @@ export default class IMEventHandler {
     setTimeout(() => {
       for (let i = 0; i < sessions.length; i++) {
         let session = sessions[i]
-        if (session['scene'] && session['scene'] !== 'p2p') {
-          continue;
-        }
+        // if (session['scene'] && session['scene'] !== 'p2p') {
+        //   continue;
+        // }
         let msg = session.lastMsg
+        console.log('session', msg);
         let sendOrReceive = ''
         let account = ''
         let type = ''
@@ -579,6 +580,9 @@ export default class IMEventHandler {
         if (msg.flow === 'in') {
           sendOrReceive = 'receive'
           account = msg.from
+          if (msg['scene'] && msg['scene'] == 'team') {
+            account = msg.to;
+          }
         } else if (msg.flow === 'out') {
           sendOrReceive = 'send'
           account = msg.to
@@ -634,16 +638,16 @@ export default class IMEventHandler {
    */
   onRoamingMsgs(obj) {
     console.log('onRoamingMsgs',obj)
-    if(obj.scene != 'p2p') {
-      return
-    }
+    // if(obj.scene != 'p2p') {
+    //   return
+    // }
     let accountMsgList = app.globalData.messageList[app.globalData.loginUser.account]
     let sessions = obj['msgs']
     for (let i = 0; i < sessions.length; i++) {
       let msg = sessions[i]
-      if (msg['scene'] && msg['scene'] !== 'p2p') {
-        continue;
-      }
+      // if (msg['scene'] && msg['scene'] !== 'p2p') {
+      //   continue;
+      // }
       
       let sendOrReceive = ''
       let account = ''
@@ -652,6 +656,9 @@ export default class IMEventHandler {
       if (msg.flow === 'in') {
         sendOrReceive = 'receive'
         account = msg.from
+        if (msg['scene'] && msg['scene'] == 'team') {
+          account = msg.to;
+        }
       } else if (msg.flow === 'out') {
         sendOrReceive = 'send'
         account = msg.to

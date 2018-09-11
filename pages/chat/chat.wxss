@@ -26,11 +26,40 @@
 }
 
 .msg-list {
-  padding: 0 5vw;
+  width: 100%;
+  /* padding: 0 5vw; */
+  height: 80vh
+}
+.user-input {
+  height: 50vh;
 }
 
 .msg {
+  padding: 0 5vw;
   margin-bottom: 5px;
+  font-size: 4.5vw;
+}
+
+.self-msg {
+  color: orange;
+}
+
+.aon{
+  position: absolute;
+  white-space:nowrap;/* 防止向下换行*/
+}
+
+.doommview{
+  z-index: 3;
+  height: 80%;
+  width: 100%;
+  position: absolute;
+}
+
+/**定义从右边向左边的移动的动画**/
+@keyframes first{
+  from{left: 100vw; }
+  to{left: -100vw;}
 }
 
 .btn-block {

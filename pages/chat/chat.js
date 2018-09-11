@@ -5,6 +5,38 @@ import * as iconBase64Map from '../../utils/imageBase64.js'
 
 //获取应用实例
 const app = getApp()
+var page;
+var doommList = [];
+var i=0;
+class Doomm {
+  constructor(text, top, time, color) {
+    this.text = text;
+    this.top = top;
+    this.time = time;
+    this.color = color;
+    this.display = true;
+    let that = this;
+    this.id = i++;
+    setTimeout(function () {
+      doommList.splice(doommList.indexOf(that), 1);//动画完成，从列表中移除这项
+      page.setData({
+        doommData: doommList
+      })
+    }, this.time * 1000)//定时器动画完成后执行。
+  }
+}
+
+function getRandomColor() {
+  let rgb = []
+  for (let i = 0; i < 3; ++i) {
+    let color = Math.floor(Math.random() * 256).toString(16)
+    color = color.length == 1 ? '0' + color : color
+    rgb.push(color)
+  }
+  return '#' + rgb.join('')
+}
+
+
 
 Page({
 
@@ -12,10 +44,15 @@ Page({
    * 页面的初始数据
    */
   data: {
+    openid: app.globalData.tokenInfo.openid,
     hasTeamId: false,
     teamId: 0,
     syncFinish: false,
-    inputValue: '',
+    scrollTop: 0,
+    barrage: false,
+    doommData: [],
+    msgList: [],
+
     focus: false,
     hidden: true,
     chatTo: '', //聊天对象
@@ -31,6 +68,32 @@ Page({
     inputValue: '',//文本框输入内容
   },
 
+  loadDoomMsg() {
+    if (this.data.barrage) {
+      this.setData({ barrage: false, doommData: []})
+      this.scrollToBottom();
+    } else {
+      this.setData({ barrage: true })
+      var i = 0
+      if (this.data.messageArr.length > 10) {
+        i = this.data.messageArr.length - 10;
+      }
+      doommList = []
+      for (; i < this.data.messageArr.length; i++) {
+        var m = this.data.messageArr[i];
+        doommList.push(new Doomm(m.text, Math.ceil(Math.random() * 100), 3 * Math.ceil(Math.random() * 7), getRandomColor()))
+      }
+      page.setData({
+        doommData: doommList
+      })
+    }
+  },
+  
+  changeMode() {
+    this.loadDoomMsg();
+    // this.initBarrageMsgList();
+  },
+
   send: function(e) {
     var text = e.detail.value;
     this.sendRequest(text)
@@ -38,7 +101,11 @@ Page({
   },
 
   chatInput: function() {
-    this.setData({ focus: true, hidden: false })
+    this.setData({ focus: true, hidden: false, scrollTop: 500})
+  },
+
+  scrollToBottom: function() {
+    this.setData({ scrollTop: 500 })
   },
 
   chatBlur: function() {
@@ -47,20 +114,38 @@ Page({
     }
   },
 
+  // var insertNewMsg = {
+  //   type: 'text',
+  //   from: newMessage.from,
+  //   text: newMessage.text,
+  //   time,
+  //   sendOrReceive: newMessage.sendOrReceive,
+  //   displayTimeHeader,
+  //   nodes: generateRichTextNode(newMessage.text)
+  // }, 
+  handleNewMessage: function(msg) {
+    console.log('handleNewMessage', msg);
+    doommList.push(new Doomm(msg.text, Math.ceil(Math.random() * 100), Math.ceil(Math.random() * 10), getRandomColor()))
+    page.setData({
+      doommData: doommList
+    })
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
     console.log(options);
     var self = this;
+    page = this;
     app.globalData.subscriber.on('SYNC_DONE', () => {
-      self.doLoad({ 'chatTo': '1382627093'})
+      // self.doLoad({ 'chatTo': '1382627093'})
 
-      // self.setData({syncFinish: true})
-      // console.log('sync finish!');
-      // if (self.data.hasTeamId) {
-      //   self.doLoad({ 'chatTo': self.data.teamId })
-      // }
+      self.setData({syncFinish: true})
+      console.log('sync finish!');
+      if (self.data.hasTeamId) {
+        self.doLoad({ 'chatTo': self.data.teamId })
+      }
     })
     app.globalData.subscriber.on('TEAM_ID', (tid) => {
       self.setData({ hasTeamId: true, teamId: tid })
@@ -85,47 +170,7 @@ Page({
       chatTo = options.chatTo
     // 更新当前会话对象账户
     app.globalData.currentChatTo = chatTo
-    if (chatTo === app.globalData['loginUser']['account']) {
-      wx.setNavigationBarTitle({
-        title: '我的电脑',
-      })
-      this.setData({
-        chatTo: app.globalData['loginUser']['account'],
-        loginAccountLogo: app.globalData.loginUser['avatar'] || this.data.defaultUserLogo,
-        chatToLogo: app.globalData.loginUser['avatar'] || this.data.defaultUserLogo,
-      })
-    } else {
-      // 设置头像数据
-      // app.globalData.nim.getUser({
-      //   account: chatTo,
-      //   done: function (err, user) {
-      //     if (err) {
-      //       console.log(err)
-      //       wx.showToast({
-      //         title: err.message,
-      //         icon: 'none',
-      //         duration: 1500
-      //       })
-      //       return
-      //     }
-      //     wx.setNavigationBarTitle({
-      //       title: user.nick,
-      //     })
-
-      //     let chatToLogo = ''
-      //     if (user['avatar']) {
-      //       chatToLogo = user.avatar
-      //     } else {
-      //       chatToLogo = self.data.defaultUserLogo
-      //     }
-      //     self.setData({
-      //       chatToLogo,
-      //       loginAccountLogo: app.globalData.loginUser['avatar'] || self.data.defaultUserLogo
-      //     })
-      //   }
-      // })
-    }
-
+    
     // 渲染应用期间历史消息
     let loginUserAccount = app.globalData['loginUser']['account']
     let loginMessageList = app.globalData.messageList[loginUserAccount]
@@ -137,6 +182,7 @@ Page({
           tempArr.push({
             type: 'text',
             text: chatToMessageList[time].text,
+            from: chatToMessageList[time].from,
             time,
             sendOrReceive: chatToMessageList[time].sendOrReceive,
             displayTimeHeader: chatToMessageList[time].displayTimeHeader || '',
@@ -247,36 +293,8 @@ Page({
     // 重新计算所有时间
     self.reCalcAllMessageTime()
     // 滚动到底部
-    // self.scrollToBottom()
-    // 聊天时对方撤回消息
-    app.globalData.subscriber.on('OPPOSITE_RECALL_WHEN_CHATTING', ({ account, time, tip }) => {
-      if (self.data.chatTo !== account) {// 非当前聊天人消息
-        return
-      }
-      // 收起可能展开的聊天框
-      this.foldInputArea()
-
-      let loginUserAccount = app.globalData['loginUser']['account']
-      let newMessage = app.globalData.messageList[loginUserAccount][account][time]
-
-      let messageArr = [...self.data.messageArr]
-      let pos = null
-      messageArr.map((item, index) => {
-        if (parseInt(item.time) === parseInt(time)) {
-          pos = index
-        }
-      })
-
-      messageArr[pos]['type'] = 'tip'
-      messageArr[pos]['nodes'] = [{
-        type: 'text',
-        text: tip
-      }]
-
-      self.setData({
-        messageArr
-      })
-    })
+    self.scrollToBottom()
+  
     // 监听p2p消息
     app.globalData.subscriber.on('RECEIVE_P2P_MESSAGE', ({ account, time }) => {
       console.log('receive p2p message', account, time);
@@ -289,6 +307,14 @@ Page({
       let loginUserAccount = app.globalData['loginUser']['account']
       let newMessage = app.globalData.messageList[loginUserAccount][account][time]
       let lastMessage = self.data.messageArr[self.data.messageArr.length - 1]
+
+      if (time == lastMessage.time && newMessage.text == lastMessage.text) {
+        console.log('same message');
+        return;
+      } else{
+        console.log('new message', time);
+      }
+
       let displayTimeHeader = ''
       if (lastMessage) {//拥有上一条消息
         let delta = time - lastMessage.time
@@ -300,16 +326,20 @@ Page({
       }
       // 刷新视图
       if (newMessage.type === 'text') {
+        var insertNewMsg = {
+          type: 'text',
+          from: newMessage.from,
+          text: newMessage.text,
+          time,
+          sendOrReceive: newMessage.sendOrReceive,
+          displayTimeHeader,
+          nodes: generateRichTextNode(newMessage.text)
+        }
         this.setData({
-          messageArr: [...this.data.messageArr, {
-            type: 'text',
-            text: newMessage.text,
-            time,
-            sendOrReceive: newMessage.sendOrReceive,
-            displayTimeHeader,
-            nodes: generateRichTextNode(newMessage.text)
-          }]
+          messageArr: [...this.data.messageArr, insertNewMsg]
         })
+        this.handleNewMessage(insertNewMsg);
+
       } else if (newMessage.type === 'image') {
         this.setData({
           messageArr: [...this.data.messageArr, {
@@ -437,7 +467,7 @@ Page({
       app.globalData.recentChatList[self.data.chatTo][time]['displayTimeHeader'] = displayTimeHeader
 
       // 滚动到页面底部
-      // self.scrollToBottom()
+      self.scrollToBottom()
     })
   },
 
@@ -454,17 +484,20 @@ Page({
         }
         // 刷新界面
         // let displayTimeHeader = self.judgeOverTwoMinute(msg.time)
+        var newMsg = {
+          text,
+          type: 'text',
+          time: msg.time,
+          sendOrReceive: 'send',
+          // displayTimeHeader,
+          nodes: generateRichTextNode(text)
+        }
         self.setData({
           inputValue: '',
-          messageArr: [...self.data.messageArr, {
-            text,
-            type: 'text',
-            time: msg.time,
-            sendOrReceive: 'send',
-            // displayTimeHeader,
-            nodes: generateRichTextNode(text)
-          }]
+          messageArr: [...self.data.messageArr, newMsg]
         })
+
+        self.handleNewMessage(newMsg);
 
         // 存储到全局 并 存储到最近会话列表中
         self.saveMsgToGlobalAndRecent(msg, {
@@ -480,7 +513,7 @@ Page({
         // 最后一个参数表示，不更新未读数
         app.globalData.subscriber.emit('UPDATE_RECENT_CHAT', { account: msg.to, time: msg.time, text: msg.text, type: msg.type }, true)
         // 滚动到底部
-        // self.scrollToBottom()
+        self.scrollToBottom()
       }
     })
   },

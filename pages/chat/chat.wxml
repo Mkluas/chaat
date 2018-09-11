@@ -1,4 +1,6 @@
 <!--pages/chat/chat.wxml-->
+<wxs src="../../utils/tools.wxs" module="tools" />
+
 <view class='page'>
   <view class="{{hidden ? 'chat-input hide' : 'chat-input'}}">
     <input placeholder="" 
@@ -7,15 +9,31 @@
     value="{{inputValue}}"  focus="{{focus}}" />
   </view>
   <view class='bg' bindtap='chatBlur'>
-    <view class='msg-list'>
-      <view class='msg' wx:for="{{messageArr}}" wx:key="{{item.time}}">
-        {{item.text}}
+    <scroll-view class="{{hidden ? 'msg-list' : 'msg-list user-input'}}" scroll-y scroll-x="{{false}}" scroll-with-animation scroll-top="{{scrollTop}}">
+
+
+      <view class="doommview" wx:if="{{barrage}}">
+        <view  wx:for="{{doommData}}" wx:key="{{item.time + item.text}}" >
+          <text class="aon" style="top:{{item.top}}%; color:{{item.color}}; animation: first {{item.time}}s linear forwards;">
+              {{item.text}}
+          </text>
+        </view>
       </view>
-    </view>
+
+
+      <view wx:else>
+        <view class='msg' wx:for="{{messageArr}}" wx:key="{{item.time + item.text}}" >
+          <view class='self-msg' wx:if="{{tools.equals(openid, item.from)}}">me: {{item.text}}</view>
+          <view wx:else>{{item.text}}</view>
+        </view>
+      </view>
+
+
+    </scroll-view>
   </view>
 
   <view class='btn-block'>
-    <image class='mode' src='/images/mode.png'></image>  
+    <image class='mode' bindtap='changeMode' src='/images/mode.png'></image>  
     <image class='chat' bindtap='chatInput' src='/images/chat.png'></image> 
   </view>
 </view>
