@@ -7,6 +7,7 @@ import * as iconBase64Map from '../../utils/imageBase64.js'
 const app = getApp()
 var page;
 var doommList = [];
+var interval;
 var i=0;
 class Doomm {
   constructor(text, top, time, color) {
@@ -17,14 +18,9 @@ class Doomm {
     this.display = true;
     let that = this;
     this.id = i++;
-    setTimeout(function () {
-      doommList.splice(doommList.indexOf(that), 1);//动画完成，从列表中移除这项
-      page.setData({
-        doommData: doommList
-      })
-    }, this.time * 1000)//定时器动画完成后执行。
   }
 }
+
 
 function getRandomColor() {
   let rgb = []
@@ -52,6 +48,7 @@ Page({
     barrage: false,
     doommData: [],
     msgList: [],
+    stop: false,
 
     focus: false,
     hidden: true,
@@ -69,9 +66,16 @@ Page({
   },
 
   loadDoomMsg() {
+    
+  },
+  
+  changeMode() {
+    this.loadDoomMsg();
+
     if (this.data.barrage) {
-      this.setData({ barrage: false, doommData: []})
+      this.setData({ barrage: false, doommData: [] })
       this.scrollToBottom();
+      clearInterval(interval);
     } else {
       this.setData({ barrage: true })
       var i = 0
@@ -81,17 +85,33 @@ Page({
       doommList = []
       for (; i < this.data.messageArr.length; i++) {
         var m = this.data.messageArr[i];
-        doommList.push(new Doomm(m.text, Math.ceil(Math.random() * 100), 3 * Math.ceil(Math.random() * 7), getRandomColor()))
+        doommList.push(new Doomm(m.text, Math.ceil(Math.random() * 100), 5 + Math.ceil(Math.random() * 10), getRandomColor()))
       }
       page.setData({
         doommData: doommList
       })
+
+      interval = setInterval(function () {
+        if (doommList.length > 0) {
+          const query = wx.createSelectorQuery()
+          var msgViews = query.selectAll('.aon').boundingClientRect()
+          query.selectViewport().scrollOffset()
+          query.exec(function (res) {
+            res[0].forEach(r => {
+              // console.log(r)
+              if (r.left + r.width < 0) {
+                var index = doommList.findIndex(d => d.id == r.id);
+                doommList.splice(index, 1);
+                page.setData({
+                  doommData: doommList
+                })
+              }
+            })
+          })
+        }
+      }, 1000)
+
     }
-  },
-  
-  changeMode() {
-    this.loadDoomMsg();
-    // this.initBarrageMsgList();
   },
 
   send: function(e) {
@@ -101,17 +121,32 @@ Page({
   },
 
   chatInput: function() {
-    this.setData({ focus: true, hidden: false, scrollTop: 500})
+    this.setData({ focus: true, hidden: false, scrollTop: 10000})
   },
 
   scrollToBottom: function() {
-    this.setData({ scrollTop: 500 })
+    this.setData({ scrollTop: 10000 })
   },
 
-  chatBlur: function() {
+  chatBlur: function(e) {
+    console.log(e);
     if (this.data.focus) {
       this.setData({ focus: false, hidden: true, inputValue: '' })
     }
+  },
+
+  // touchmove: function(e) {
+  //   this.setData({ stop: true });
+  //   console.log(e);
+  // },
+
+  touchstart: function (e) {
+    this.setData({ stop: true });
+    console.log(e);
+  },
+
+  touchend: function() {
+    this.setData({ stop: false });
   },
 
   // var insertNewMsg = {
@@ -139,13 +174,13 @@ Page({
     var self = this;
     page = this;
     app.globalData.subscriber.on('SYNC_DONE', () => {
-      // self.doLoad({ 'chatTo': '1382627093'})
+      self.doLoad({ 'chatTo': '1382627093'})
 
-      self.setData({syncFinish: true})
-      console.log('sync finish!');
-      if (self.data.hasTeamId) {
-        self.doLoad({ 'chatTo': self.data.teamId })
-      }
+      // self.setData({syncFinish: true})
+      // console.log('sync finish!');
+      // if (self.data.hasTeamId) {
+      //   self.doLoad({ 'chatTo': self.data.teamId })
+      // }
     })
     app.globalData.subscriber.on('TEAM_ID', (tid) => {
       self.setData({ hasTeamId: true, teamId: tid })

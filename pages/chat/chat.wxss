@@ -30,6 +30,7 @@
   /* padding: 0 5vw; */
   height: 80vh
 }
+
 .user-input {
   height: 50vh;
 }
@@ -60,6 +61,10 @@
 @keyframes first{
   from{left: 100vw; }
   to{left: -100vw;}
+}
+
+.stop {
+  animation-play-state: paused;
 }
 
 .btn-block {
