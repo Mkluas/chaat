@@ -83,6 +83,7 @@ export default class IMEventHandler {
    * 连接成功
    */
   onConnect() {
+    console.log('onConnect')
     // 切换到用户界面
     // wx.switchTab({
     //   url: '../contact/contact',
@@ -840,9 +841,9 @@ export default class IMEventHandler {
    * onConnect成功后会开始同步，进入此表示数据同步完成
    */
   onSyncDone() {
-    // console.log('Sync Done')
+    console.log('Sync Done')
     // 设置登录状态
-    app.globalData.isLogin = false
+    app.globalData.isLogin = true
     wx.hideLoading()
     app.globalData.subscriber.emit('SYNC_DONE', {})
     // wx.switchTab({

@@ -24,6 +24,7 @@ App({
               app: app,
               url: "/ma/user/token/check",
               success: function () {
+                app.globalData.subscriber.emit('APP_LOGIN')
                 app.globalData.login = true;
                 app.connectNIM();
               }
@@ -36,6 +37,14 @@ App({
           app.doLogin(app.connectNIM);
         }
       })
+    } else {
+      if (app.globalData.isLogin) {
+        console.log('already login, send sync_done')
+        app.globalData.subscriber.emit('SYNC_DONE', {})
+      } else {
+        console.log('already login app, do login NIM')
+        app.connectNIM();
+      }
     }
     app.fetchTeamId(options);
   },
@@ -43,9 +52,8 @@ App({
   fetchTeamId(options) {
     var app = this;
     if (options['shareTicket']) {
-      var shareTicket = options['shareTicket'];
       wx.getShareInfo({
-        shareTicket: shareTicket,
+        shareTicket: options['shareTicket'],
         success: function (res) {
           res['userId'] = options.query['userId'];
           request.post({
@@ -53,11 +61,7 @@ App({
             url: "/ma/group/decrypt",
             data: res,
             success: function (d) {
-              app.globalData.shareTicket = shareTicket;
               app.globalData.group = d.group;
-              wx.setStorage({key: 'shareTicket',data: shareTicket})
-              wx.setStorage({ key: 'group', data: d.group })
-              console.log("New groupId", app.globalData.group);
               app.globalData.subscriber.emit('TEAM_ID', app.globalData.group.teamId)
             }
           })
@@ -65,6 +69,7 @@ App({
       })
     } else {
       console.log('shareTicket is null')
+      app.globalData.subscriber.emit('TEAM_ID_NOT_FOUND')
     }
   },
 
@@ -81,6 +86,7 @@ App({
             app.globalData.tokenInfo = data;
             wx.setStorage({key: 'tokenInfo',data: data})
             app.globalData.login = true;
+            app.globalData.subscriber.emit('APP_LOGIN')
             cb && cb(app.globalData.tokenInfo.token);
           }
         })
@@ -97,10 +103,6 @@ App({
     })
   },
 
-  requireChatTo: function (cb) {
-    
-  },
-  
   onHide() {
     
   },

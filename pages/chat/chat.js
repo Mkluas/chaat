@@ -21,7 +21,6 @@ class Doomm {
   }
 }
 
-
 function getRandomColor() {
   let rgb = []
   for (let i = 0; i < 3; ++i) {
@@ -32,7 +31,22 @@ function getRandomColor() {
   return '#' + rgb.join('')
 }
 
-
+function randomTop() {
+  var top;
+  var valid;
+  do {
+    valid = true;
+    top = Math.ceil(Math.random() * 100)
+    for (let i = 0; i < doommList.length; i++) {
+      if (Math.abs(doommList[i].top - top) < 4.5) {
+        valid = false;
+        break;
+      }
+    }
+  } while(!valid);
+  // console.log('top', top)
+  return top;
+}
 
 Page({
 
@@ -65,13 +79,7 @@ Page({
     inputValue: '',//文本框输入内容
   },
 
-  loadDoomMsg() {
-    
-  },
-  
   changeMode() {
-    this.loadDoomMsg();
-
     if (this.data.barrage) {
       this.setData({ barrage: false, doommData: [] })
       this.scrollToBottom();
@@ -85,12 +93,9 @@ Page({
       doommList = []
       for (; i < this.data.messageArr.length; i++) {
         var m = this.data.messageArr[i];
-        doommList.push(new Doomm(m.text, Math.ceil(Math.random() * 100), 5 + Math.ceil(Math.random() * 10), getRandomColor()))
+        doommList.push(new Doomm(m.text, randomTop(), 5 + Math.ceil(Math.random() * 10), getRandomColor()))
       }
-      page.setData({
-        doommData: doommList
-      })
-
+      page.setData({doommData: doommList})
       interval = setInterval(function () {
         if (doommList.length > 0) {
           const query = wx.createSelectorQuery()
@@ -98,13 +103,10 @@ Page({
           query.selectViewport().scrollOffset()
           query.exec(function (res) {
             res[0].forEach(r => {
-              // console.log(r)
               if (r.left + r.width < 0) {
                 var index = doommList.findIndex(d => d.id == r.id);
                 doommList.splice(index, 1);
-                page.setData({
-                  doommData: doommList
-                })
+                page.setData({doommData: doommList})
               }
             })
           })
@@ -129,16 +131,10 @@ Page({
   },
 
   chatBlur: function(e) {
-    console.log(e);
     if (this.data.focus) {
       this.setData({ focus: false, hidden: true, inputValue: '' })
     }
   },
-
-  // touchmove: function(e) {
-  //   this.setData({ stop: true });
-  //   console.log(e);
-  // },
 
   touchstart: function (e) {
     this.setData({ stop: true });
@@ -149,18 +145,9 @@ Page({
     this.setData({ stop: false });
   },
 
-  // var insertNewMsg = {
-  //   type: 'text',
-  //   from: newMessage.from,
-  //   text: newMessage.text,
-  //   time,
-  //   sendOrReceive: newMessage.sendOrReceive,
-  //   displayTimeHeader,
-  //   nodes: generateRichTextNode(newMessage.text)
-  // }, 
   handleNewMessage: function(msg) {
     console.log('handleNewMessage', msg);
-    doommList.push(new Doomm(msg.text, Math.ceil(Math.random() * 100), Math.ceil(Math.random() * 10), getRandomColor()))
+    doommList.push(new Doomm(msg.text, randomTop(), 5 + Math.ceil(Math.random() * 10), getRandomColor()))
     page.setData({
       doommData: doommList
     })
@@ -174,21 +161,28 @@ Page({
     var self = this;
     page = this;
     app.globalData.subscriber.on('SYNC_DONE', () => {
-      self.doLoad({ 'chatTo': '1382627093'})
-
-      // self.setData({syncFinish: true})
-      // console.log('sync finish!');
-      // if (self.data.hasTeamId) {
-      //   self.doLoad({ 'chatTo': self.data.teamId })
-      // }
+      // self.doLoad({ 'chatTo': '1382627093'})
+      self.setData({syncFinish: true})
+      console.log('sync finish!');
+      if (self.data.hasTeamId) {
+        self.doLoad({ 'chatTo': self.data.teamId })
+      }
     })
     app.globalData.subscriber.on('TEAM_ID', (tid) => {
-      self.setData({ hasTeamId: true, teamId: tid })
+      self.setData({ hasTeamId: true, teamId: tid, chatTo: tid })
       console.log('teamId', tid);
       if (self.data.syncFinish) {
         self.doLoad({ 'chatTo': tid })
       }
     })
+    app.globalData.subscriber.on('TEAM_ID_NOT_FOUND',() => {
+      wx.redirectTo({
+        url: '/pages/index/index',
+      })
+    });
+    if (app.globalData.isLogin && options.chatTo) {
+      self.doLoad(options)
+    }
   },
 
   /**
@@ -347,18 +341,19 @@ Page({
         console.log('same message');
         return;
       } else{
+        console.log('lastMsg', lastMessage);
         console.log('new message', time);
       }
 
       let displayTimeHeader = ''
-      if (lastMessage) {//拥有上一条消息
-        let delta = time - lastMessage.time
-        if (delta > 2 * 60 * 1000) {//超过两分钟
-          displayTimeHeader = calcTimeHeader(time)
-        }
-      } else {//没有上一条消息
-        displayTimeHeader = calcTimeHeader(time)
-      }
+      // if (lastMessage) {//拥有上一条消息
+      //   let delta = time - lastMessage.time
+      //   if (delta > 2 * 60 * 1000) {//超过两分钟
+      //     displayTimeHeader = calcTimeHeader(time)
+      //   }
+      // } else {//没有上一条消息
+      //   displayTimeHeader = calcTimeHeader(time)
+      // }
       // 刷新视图
       if (newMessage.type === 'text') {
         var insertNewMsg = {

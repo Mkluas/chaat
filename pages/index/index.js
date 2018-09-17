@@ -1,21 +1,46 @@
 //获取应用实例
+const request = require('../../utils/request.js')
 const app = getApp()
 
 Page({
   data: {
-    
+    teams: []
   },
   bindViewTap: function() {
    
   },
   onLoad: function () {
+    var self = this;
     wx.showShareMenu({
       withShareTicket: true,
       success: function (res) {
         console.log('share', res)
       }
     })
+
+    if (app.globalData.login) {
+      self.loadTeams();
+    } else {
+      console.log('subscribe APP_LOGIN')
+      app.globalData.subscriber.on('APP_LOGIN', () => {
+        console.log('APP login')
+        self.loadTeams();
+      });
+    }
+
   },
+
+  loadTeams: function() {
+    var self = this;
+    request.get({
+      app: app,
+      url: '/ma/group/list',
+      success: function(d) {
+        self.setData({ teams: d.teams })
+      }
+    })
+  },
+
   /**
    * 用户点击右上角分享
    */

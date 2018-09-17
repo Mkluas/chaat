@@ -4,7 +4,7 @@
   display: block;
   text-align: center;
   font-size: 10vw;
-  margin-top: 15vh;
+  padding-top: 15vh;
 }
 
 .tip {
@@ -23,4 +23,17 @@
   left: 42.5vw;
   width: 15vw;
   height: 15vw;
+}
+
+.team-list {
+  border-top: 1px solid #f0f0f0;
+  margin-bottom: 20vh;
+}
+.team {
+  padding: 18px 20px;
+  height: 26px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.groupName {
+  font-size: 18px;
 }
