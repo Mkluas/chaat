@@ -28,7 +28,7 @@
 .msg-list {
   width: 100%;
   /* padding: 0 5vw; */
-  height: 80vh
+  height: 85vh
 }
 
 .user-input {
@@ -45,16 +45,16 @@
   color: orange;
 }
 
-.aon{
-  position: absolute;
-  white-space:nowrap;/* 防止向下换行*/
-}
-
-.doommview{
+.barrage {
   z-index: 3;
   height: 80%;
   width: 100%;
   position: absolute;
+}
+
+.barrage .text{
+  position: absolute;
+  white-space:nowrap;/* 防止向下换行*/
 }
 
 /**定义从右边向左边的移动的动画**/

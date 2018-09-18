@@ -2,51 +2,11 @@
 import { generateFingerGuessImageFile, generateBigEmojiImageFile, generateRichTextNode, generateImageNode, calcTimeHeader } from '../../utils/util.js'
 import { deepClone, clickLogoJumpToCard } from '../../utils/util.js'
 import * as iconBase64Map from '../../utils/imageBase64.js'
+import {Barrage} from '../../utils/barrage.js'
+
 
 //获取应用实例
 const app = getApp()
-var page;
-var doommList = [];
-var interval;
-var i=0;
-class Doomm {
-  constructor(text, top, time, color) {
-    this.text = text;
-    this.top = top;
-    this.time = time;
-    this.color = color;
-    this.display = true;
-    let that = this;
-    this.id = i++;
-  }
-}
-
-function getRandomColor() {
-  let rgb = []
-  for (let i = 0; i < 3; ++i) {
-    let color = Math.floor(Math.random() * 256).toString(16)
-    color = color.length == 1 ? '0' + color : color
-    rgb.push(color)
-  }
-  return '#' + rgb.join('')
-}
-
-function randomTop() {
-  var top;
-  var valid;
-  do {
-    valid = true;
-    top = Math.ceil(Math.random() * 100)
-    for (let i = 0; i < doommList.length; i++) {
-      if (Math.abs(doommList[i].top - top) < 4.5) {
-        valid = false;
-        break;
-      }
-    }
-  } while(!valid);
-  // console.log('top', top)
-  return top;
-}
 
 Page({
 
@@ -59,10 +19,12 @@ Page({
     teamId: 0,
     syncFinish: false,
     scrollTop: 0,
-    barrage: false,
-    doommData: [],
+    isBarrage: false,
+    barrage: {},
+    barrageData: [],
     msgList: [],
     stop: false,
+    firstBarrage: true,
 
     focus: false,
     hidden: true,
@@ -80,39 +42,26 @@ Page({
   },
 
   changeMode() {
-    if (this.data.barrage) {
-      this.setData({ barrage: false, doommData: [] })
+    if (this.data.isBarrage) {
+      this.setData({ isBarrage: false, doommData: [] })
       this.scrollToBottom();
-      clearInterval(interval);
+      this.barrage.close();
     } else {
-      this.setData({ barrage: true })
-      var i = 0
-      if (this.data.messageArr.length > 10) {
-        i = this.data.messageArr.length - 10;
+      this.setData({ isBarrage: true })
+      if (this.data.firstBarrage) {
+        console.log('load');
+        this.setData({ firstBarrage: false})
+        this.barrage.reload(this.data.messageArr)
       }
-      doommList = []
-      for (; i < this.data.messageArr.length; i++) {
-        var m = this.data.messageArr[i];
-        doommList.push(new Doomm(m.text, randomTop(), 5 + Math.ceil(Math.random() * 10), getRandomColor()))
-      }
-      page.setData({doommData: doommList})
-      interval = setInterval(function () {
-        if (doommList.length > 0) {
-          const query = wx.createSelectorQuery()
-          var msgViews = query.selectAll('.aon').boundingClientRect()
-          query.selectViewport().scrollOffset()
-          query.exec(function (res) {
-            res[0].forEach(r => {
-              if (r.left + r.width < 0) {
-                var index = doommList.findIndex(d => d.id == r.id);
-                doommList.splice(index, 1);
-                page.setData({doommData: doommList})
-              }
-            })
-          })
-        }
-      }, 1000)
-
+      
+      // var self = this;
+      // setInterval(function () {
+      //   self.barrage.pushBullet({'text': 'hello'});
+      // }, 3000);
+      // var self = this;
+      // setInterval(function () {
+      //   self.barrage.pushBullet({ 'text': '今晚吃咩' });
+      // }, 2000);
     }
   },
 
@@ -138,7 +87,6 @@ Page({
 
   touchstart: function (e) {
     this.setData({ stop: true });
-    console.log(e);
   },
 
   touchend: function() {
@@ -146,20 +94,20 @@ Page({
   },
 
   handleNewMessage: function(msg) {
-    console.log('handleNewMessage', msg);
-    doommList.push(new Doomm(msg.text, randomTop(), 5 + Math.ceil(Math.random() * 10), getRandomColor()))
-    page.setData({
-      doommData: doommList
-    })
+    this.barrage.pushBullet(msg);
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+   
     console.log(options);
     var self = this;
-    page = this;
+    self.barrage = new Barrage((bulletList) => {
+      self.setData({ barrageData: bulletList})
+    }, wx.createSelectorQuery())
+
     app.globalData.subscriber.on('SYNC_DONE', () => {
       // self.doLoad({ 'chatTo': '1382627093'})
       self.setData({syncFinish: true})
@@ -176,9 +124,7 @@ Page({
       }
     })
     app.globalData.subscriber.on('TEAM_ID_NOT_FOUND',() => {
-      wx.redirectTo({
-        url: '/pages/index/index',
-      })
+      wx.redirectTo({url: '/pages/index/index'})
     });
     if (app.globalData.isLogin && options.chatTo) {
       self.doLoad(options)

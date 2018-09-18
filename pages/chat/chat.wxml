@@ -9,12 +9,13 @@
     value="{{inputValue}}"  focus="{{focus}}" />
   </view>
   <view class='bg' bindtap='chatBlur' bindtouchmove='touchmove'  bindtouchstart='touchstart' bindtouchend='touchend'>
-    <scroll-view class="{{hidden ? 'msg-list' : 'msg-list user-input'}}" scroll-y scroll-x="{{false}}" scroll-with-animation scroll-top="{{scrollTop}}">
+    <scroll-view class="msg-list" scroll-y scroll-x="{{false}}" scroll-with-animation scroll-top="{{scrollTop}}">
 
 
-      <view class="doommview" wx:if="{{barrage}}">
-        <view wx:for="{{doommData}}" wx:key="{{item.time + item.text}}" >
-          <text id="{{item.id}}" style="top:{{item.top}}%; color:{{item.color}}; animation-name: first; animation-duration:{{item.time}}s; animation-timing-function: linear forwards;" class="{{stop ? 'aon stop' : 'aon'}}">
+      <view class="{{hidden ? 'barrage' : 'barrage user-input'}}"  wx:if="{{isBarrage}}">
+        <view wx:for="{{barrageData}}" wx:key="{{item.id}}" >
+          <text id="{{item.id}}" wx:if="{{item.show}}" 
+              style="top:{{item.top}}%; font-size:{{item.fontsize}}vh; color:{{item.color}}; animation-name: first; animation-duration:{{item.duration}}s; animation-timing-function: linear forwards;"                class="{{stop ? 'text stop' : 'text'}}">
               {{item.text}}
           </text>
         </view>
