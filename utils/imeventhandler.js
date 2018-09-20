@@ -83,7 +83,7 @@ export default class IMEventHandler {
    * 连接成功
    */
   onConnect() {
-    console.log('onConnect')
+    // console.log('onConnect')
     // 切换到用户界面
     // wx.switchTab({
     //   url: '../contact/contact',
@@ -565,7 +565,6 @@ export default class IMEventHandler {
     sessions.sort((a, b) => {
       return a.updateTime > b.updateTime
     })
-    // console.log('onSessions', sessions)
     setTimeout(() => {
       for (let i = 0; i < sessions.length; i++) {
         let session = sessions[i]
@@ -573,7 +572,6 @@ export default class IMEventHandler {
         //   continue;
         // }
         let msg = session.lastMsg
-        console.log('session', msg);
         let sendOrReceive = ''
         let account = ''
         let type = ''
@@ -638,7 +636,7 @@ export default class IMEventHandler {
    * {scene:"team",sessionId:"team-3944051",timetag:,to:"3944051",msgs:[{from:'wujie',text:'222',to:'cs4'}]}
    */
   onRoamingMsgs(obj) {
-    console.log('onRoamingMsgs',obj)
+    // console.log('onRoamingMsgs',obj)
     // if(obj.scene != 'p2p') {
     //   return
     // }

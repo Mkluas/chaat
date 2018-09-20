@@ -16,6 +16,8 @@ App({
   
   onShow(options) {
     var app = this;
+    app.globalData.options = options;
+
     if (!app.globalData.login) {
       wx.checkSession({
         success: function () {
@@ -46,31 +48,6 @@ App({
         app.connectNIM();
       }
     }
-    app.fetchTeamId(options);
-  },
-
-  fetchTeamId(options) {
-    var app = this;
-    if (options['shareTicket']) {
-      wx.getShareInfo({
-        shareTicket: options['shareTicket'],
-        success: function (res) {
-          res['userId'] = options.query['userId'];
-          request.post({
-            app: app,
-            url: "/ma/group/decrypt",
-            data: res,
-            success: function (d) {
-              app.globalData.group = d.group;
-              app.globalData.subscriber.emit('TEAM_ID', app.globalData.group.teamId)
-            }
-          })
-        }
-      })
-    } else {
-      console.log('shareTicket is null')
-      app.globalData.subscriber.emit('TEAM_ID_NOT_FOUND')
-    }
   },
 
   doLogin: function(cb) {
@@ -96,11 +73,37 @@ App({
 
   connectNIM: function (cb) {
     var app = this;
-    console.log("connect nim")
+    console.log("connect nim", app.globalData.tokenInfo)
+    app.fetchTeamId(app.globalData.options);
     new IMEventHandler(app, {
       token: app.globalData.tokenInfo.nimToken,
       account: app.globalData.tokenInfo.openid
     })
+  },
+
+
+  fetchTeamId(options) {
+    var app = this;
+    if (options['shareTicket']) {
+      wx.getShareInfo({
+        shareTicket: options['shareTicket'],
+        success: function (res) {
+          res['userId'] = options.query['userId'];
+          request.post({
+            app: app,
+            url: "/ma/group/decrypt",
+            data: res,
+            success: function (d) {
+              app.globalData.group = d.group;
+              app.globalData.subscriber.emit('TEAM_ID', app.globalData.group.teamId)
+            }
+          })
+        }
+      })
+    } else {
+      console.log('shareTicket is null')
+      app.globalData.subscriber.emit('TEAM_ID_NOT_FOUND')
+    }
   },
 
   onHide() {
@@ -113,7 +116,7 @@ App({
   globalData:{
     login: false,
     tokenInfo: {},
-    shareTicket: null,
+    options: {},
 
     isLogin: false, // 当前是否是登录状态
     currentChatTo: '', // 记录当前聊天对象account，用于标记聊天时禁止更新最近会话unread

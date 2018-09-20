@@ -1,8 +1,20 @@
 var equals = function(s1, s2) {
   if(!s2) {
     return true;
+  } 
+  if (!s1) {
+    return false;
   }
   return s1.toUpperCase() == s2.toUpperCase();
+}
+
+var removeSpecial = function(text) {
+  var checkRangeText = text.substring(text.length - 1)
+  if (checkRangeText == '！') {
+    text = text.substring(0, text.length - 1)
+  }
+  console.log(text);
+  return text;
 }
 
 module.exports = {

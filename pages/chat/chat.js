@@ -49,19 +49,9 @@ Page({
     } else {
       this.setData({ isBarrage: true })
       if (this.data.firstBarrage) {
-        console.log('load');
         this.setData({ firstBarrage: false})
         this.barrage.reload(this.data.messageArr)
       }
-      
-      // var self = this;
-      // setInterval(function () {
-      //   self.barrage.pushBullet({'text': 'hello'});
-      // }, 3000);
-      // var self = this;
-      // setInterval(function () {
-      //   self.barrage.pushBullet({ 'text': '今晚吃咩' });
-      // }, 2000);
     }
   },
 
@@ -101,16 +91,14 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-   
-    console.log(options);
     var self = this;
     self.barrage = new Barrage((bulletList) => {
       self.setData({ barrageData: bulletList})
     }, wx.createSelectorQuery())
 
     app.globalData.subscriber.on('SYNC_DONE', () => {
-      // self.doLoad({ 'chatTo': '1382627093'})
-      self.setData({syncFinish: true})
+      self.setData({syncFinish: true, openid: app.globalData.tokenInfo.openid})
+      // self.doLoad({ 'chatTo': '1380348919' })
       console.log('sync finish!');
       if (self.data.hasTeamId) {
         self.doLoad({ 'chatTo': self.data.teamId })
@@ -157,6 +145,7 @@ Page({
           tempArr.push({
             type: 'text',
             text: chatToMessageList[time].text,
+            showText: self.barrage.removeSpecial(chatToMessageList[time].text),
             from: chatToMessageList[time].from,
             time,
             sendOrReceive: chatToMessageList[time].sendOrReceive,
@@ -169,7 +158,7 @@ Page({
             text: chatToMessageList[time].text,
             time,
             sendOrReceive: chatToMessageList[time].sendOrReceive,
-            displayTimeHeader: chatToMessageList[time].displayTimeHeader || '',
+            displayTimeHeader:ifdsatToMessageList[time].displayTimeHeader || '',
             nodes: generateImageNode(chatToMessageList[time].file)
           })
         } else if (msgType === 'geo') {
@@ -272,11 +261,11 @@ Page({
   
     // 监听p2p消息
     app.globalData.subscriber.on('RECEIVE_P2P_MESSAGE', ({ account, time }) => {
-      console.log('receive p2p message', account, time);
+      // console.log('receive p2p message', account, time);
       if (self.data.chatTo !== account) {// 非当前聊天人消息
         return
       }
-      console.log('handle p2p message', account, time);
+      // console.log('handle p2p message', account, time);
       // 收起可能展开的聊天框
       // this.foldInputArea()
       let loginUserAccount = app.globalData['loginUser']['account']
@@ -284,11 +273,11 @@ Page({
       let lastMessage = self.data.messageArr[self.data.messageArr.length - 1]
 
       if (time == lastMessage.time && newMessage.text == lastMessage.text) {
-        console.log('same message');
+        // console.log('same message');
         return;
       } else{
-        console.log('lastMsg', lastMessage);
-        console.log('new message', time);
+        // console.log('lastMsg', lastMessage);
+        // console.log('new message', time);
       }
 
       let displayTimeHeader = ''
@@ -306,6 +295,7 @@ Page({
           type: 'text',
           from: newMessage.from,
           text: newMessage.text,
+          showText: self.barrage.removeSpecial(newMessage.text),
           time,
           sendOrReceive: newMessage.sendOrReceive,
           displayTimeHeader,
@@ -463,6 +453,7 @@ Page({
         var newMsg = {
           text,
           type: 'text',
+          showText: self.barrage.removeSpecial(text),
           time: msg.time,
           sendOrReceive: 'send',
           // displayTimeHeader,

@@ -1,5 +1,4 @@
 /* pages/chat/chat.wxss */
-
 .hide {
   display: none;
 }
@@ -54,7 +53,10 @@
 
 .barrage .text{
   position: absolute;
+  font-weight: 600;
   white-space:nowrap;/* 防止向下换行*/
+  backface-visibility:hidden;
+  perspective: 1000;
 }
 
 /**定义从右边向左边的移动的动画**/

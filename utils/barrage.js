@@ -31,11 +31,44 @@ function randomColor() {
   return '#' + rgb.join('')
 }
 
+function endWith(text, suffix) {
+  if (text.length <= suffix.length) {
+    return false;
+  } else {
+    return suffix === text.substring(text.length - suffix.length)
+  }
+}
+
+function removeEnd(text, suffix) {
+  return text.substring(0, text.length - suffix.length)
+}
+
+function removeIfEndWith(text, suffix) {
+  return endWith(text, suffix) ? removeEnd(text, suffix) : text;
+}
+
+function startWith(text, preffix) {
+  if (text.length <= suffix.length) {
+    return false;
+  } else {
+    return preffix === text.substring(0, suffix.length)
+  }
+}
+
+function removeStart(text, preffix) {
+  return text.substring(preffix.length);
+}
+
+function removeIfStartWith(text, preffix) {
+  return startWith(text, preffix) ? removeStart(text, preffix) : text;
+}
+
 
 class Bullet {
-	constructor(id, text, top, duration, fontsize, color) {
+	constructor(id, text, showText, top, duration, fontsize, color) {
 		this.id = id;
 		this.text = text;
+    this.showText = showText,
     this.line = 0;
 		this.top = top;
 		this.duration = duration;
@@ -55,16 +88,33 @@ class Barrage {
     this.lines = [false, false, false, false, false]
 		this.autoId = 0;
 		this.query = query;
+    this.clearRun = false;
+    this.lastInvokeTime = 0;
 	}
 
   close() {
     this.queue.clear();
     this.bulletList = [];
-    this.notifyChange();
+    this.lines = [false, false, false, false, false]
+    this.notifyChange(1);
     clearInterval(this.interval);
+    this.clearRun = false;
+  }
+
+  reload(messageArr) {
+    this.initInterval();
+    this.bulletList = []
+    var i = (messageArr.length > 10) ? messageArr.length - 10 : 0
+    for (; i < messageArr.length; i++) {
+      this.pushBullet(messageArr[i]);
+    }
   }
 
 	initInterval() {
+    if (this.clearRun) {
+      return;
+    }
+    this.clearRun = true;
 		var self = this;
 		this.interval = setInterval(function () {
       if (self.bulletList.length > 0) {
@@ -75,66 +125,41 @@ class Barrage {
         self.query.exec(function (res) {
           var allClear = true;
           res[0].forEach(r => {
-            allClear = false;
-            if (r.left + r.width < 0 && r.left != 200) {
+            if (r.left + r.width < 0) {
               var index = self.bulletList.findIndex(d => d.id == r.id);
               if (index < 0) return;
               var bullet = self.bulletList[index];
+              if (!bullet.show) return;
               self.lines[bullet.line] = false;
               bullet.show = false;
-              self.notifyChange();
-              self.controlBulletDisplay(bullet.line);
+              self.controlBulletDisplay(bullet.line, (new Date()).getTime());
+            } else {
+              allClear = false;
             }
           })
           
-          if (allClear) {
-            console.log('all Clear', allClear)
-            self.bulletList = [];
-            self.notifyChange();
+          if (allClear && self.bulletList.length > 0 && self.bulletList.filter(b => b.show).length == 0) {
+            console.log('all Clear')
+            self.close();
           }
 
-          if (self.bulletList.length > 200) {
+          if (self.bulletList.length > 500) {
             self.bulletList = self.bulletList.filter(b => b.show);
-            self.notifyChange();
+            self.notifyChange(4);
           }
 
         })
 
       }
-    }, 500)
+    }, 1000)
   }
 
-	randomTop() {
-	  var top;
-	  var valid;
-	  do {
-	    valid = true;
-	    top = Math.ceil(Math.random() * 80)
-	    for (let i = 0; i < this.bulletList.length; i++) {
-	      if (Math.abs(this.bulletList[i].top - top) < 4.5) {
-	        valid = false;
-	        break;
-	      }
-	    }
-	  } while(!valid);
-	  return top;
-	}
-
-	reload(messageArr) {
-    this.initInterval();
-		this.bulletList = []
-		var i = (messageArr.length > 10) ? messageArr.length - 10 : 0
-		for (; i < messageArr.length; i++) {
-		    this.pushBullet(messageArr[i]);
-		}
-    // this.controlBulletDisplay();
-	}
-
 	pushBullet(msg) {
+    this.initInterval();
 		var id = this.autoId++;
-		var text = msg.text + id;
-		var top = this.randomTop();
-		var color = randomColor();
+		var text = msg.text;
+    var showText = msg.showText;
+		var top = 0;
 		var duration = 7 + Math.ceil(Math.random() * 10);
     if (this.queue.size() > 20) {
       duration = 3 + Math.ceil(Math.random() * 5);
@@ -142,46 +167,53 @@ class Barrage {
     if (this.queue.size() > 50) {
       duration = 2 + Math.ceil(Math.random() * 3);
     }
-		var fontsize = 3.5 + Math.ceil(Math.random() * 5);
-		var bullet = new Bullet(id, text, top, duration, fontsize, color);
+		var fontsize = 3 + Math.ceil(Math.random() * 4);
+    var bullet = new Bullet(id, text, showText, top, duration, fontsize, randomColor());
+    bullet = this.handleSpecial(bullet);
     this.queue.enqueue(bullet);
     this.controlBulletDisplay();
 	}
 
-  controlBulletDisplay(index) {
+  handleSpecial(bullet) {
+    var text = bullet.text;
+    if (endWith(text, '！')) {
+      bullet.fontsize = 10;
+    }
+    return bullet;
+  }
+
+  removeSpecial(text) {
+    text = removeIfEndWith(text, '！')
+    return text;
+  }
+
+  controlBulletDisplay() {
     if (this.queue.isEmpty() || this.lock) {
       return;
     }
     this.lock = true;
 
-    if (index) {
-      this.lines[index] = true;
-      var bullet = this.queue.dequeue();
-      bullet.line = index;
-      bullet.top = index * 20;
-      console.log('push index ', index)
-      this.bulletList.push(bullet);
-      this.notifyChange();
-      this.lock = false;
-      return;
-    }
-
+    var change = false;
     for (let i = 0; i < this.lines.length && !this.queue.isEmpty(); i++) {
       if (!this.lines[i]) {
-        // console.log(i, ' is empty')
+        change = true;
         this.lines[i] = true;
         var bullet = this.queue.dequeue();
         bullet.line = i;
-        bullet.top = i * 20;
+        bullet.top = i * 18 + 5;
         console.log('push ', i)
         this.bulletList.push(bullet);
-        this.notifyChange();
       }
+    }
+
+    if (change) {
+      this.notifyChange(6);
     }
     this.lock=false;
   }
 
-	notifyChange() {
+	notifyChange(from) {
+    console.log('change', from)
 		this.dataChangeCb(this.bulletList);
 	}
 }

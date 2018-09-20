@@ -76,6 +76,7 @@ const initCallback = options => {
       if (res.data && res.data.errCode === 40025) {
       
         app.doLogin(function(token) {
+          console.log('try login success')
           if (options.data) {
             options.data.token = token;
           } else {

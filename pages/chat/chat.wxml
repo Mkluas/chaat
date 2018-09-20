@@ -8,28 +8,25 @@
     bindconfirm='send' 
     value="{{inputValue}}"  focus="{{focus}}" />
   </view>
-  <view class='bg' bindtap='chatBlur' bindtouchmove='touchmove'  bindtouchstart='touchstart' bindtouchend='touchend'>
+  <view class='bg' bindtap='chatBlur' no-bindtouchmove='touchmove'  no-bindtouchstart='touchstart' no-bindtouchend='touchend'>
     <scroll-view class="msg-list" scroll-y scroll-x="{{false}}" scroll-with-animation scroll-top="{{scrollTop}}">
-
-
       <view class="{{hidden ? 'barrage' : 'barrage user-input'}}"  wx:if="{{isBarrage}}">
         <view wx:for="{{barrageData}}" wx:key="{{item.id}}" >
-          <text id="{{item.id}}" wx:if="{{item.show}}" 
-              style="top:{{item.top}}%; font-size:{{item.fontsize}}vh; color:{{item.color}}; animation-name: first; animation-duration:{{item.duration}}s; animation-timing-function: linear forwards;"                class="{{stop ? 'text stop' : 'text'}}">
-              {{item.text}}
-          </text>
+          <view id="{{item.id}}" wx:if="{{item.show}}" class="{{stop ? 'text stop' : 'text'}}"
+              style="top:{{item.top}}%; line-height:{{item.fontsize}}vh; height:{{item.fontsize}}vh; font-size:{{item.fontsize}}vh; color:{{item.color}}; animation: first {{item.duration}}s linear forwards;"                
+          >
+              {{item.showText}}
+          </view>
         </view>
       </view>
 
 
       <view wx:else>
         <view class='msg' wx:for="{{messageArr}}" wx:key="{{item.time + item.text}}" >
-          <view class='self-msg' wx:if="{{tools.equals(openid, item.from)}}">me: {{item.text}}</view>
-          <view wx:else>{{item.text}}</view>
+          <view class='self-msg' wx:if="{{tools.equals(openid, item.from)}}">{{item.showText}}</view>
+          <view wx:else>{{item.showText}}</view>
         </view>
       </view>
-
-
     </scroll-view>
   </view>
 
