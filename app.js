@@ -13,7 +13,7 @@ App({
     app.globalData.tokenInfo = wx.getStorageSync('tokenInfo');
     app.globalData.group = wx.getStorageSync('group');
   },
-  
+
   onShow(options) {
     var app = this;
     app.globalData.options = options;
@@ -26,9 +26,7 @@ App({
               app: app,
               url: "/ma/user/token/check",
               success: function () {
-                app.globalData.subscriber.emit('APP_LOGIN')
-                app.globalData.login = true;
-                app.connectNIM();
+                app.initEnvAfterEnsureLogin();
               }
             });
           } else {
@@ -40,13 +38,7 @@ App({
         }
       })
     } else {
-      if (app.globalData.isLogin) {
-        console.log('already login, send sync_done')
-        app.globalData.subscriber.emit('SYNC_DONE', {})
-      } else {
-        console.log('already login app, do login NIM')
-        app.connectNIM();
-      }
+      app.initEnvAfterEnsureLogin();
     }
   },
 
@@ -62,8 +54,7 @@ App({
           success: function (data) {
             app.globalData.tokenInfo = data;
             wx.setStorage({key: 'tokenInfo',data: data})
-            app.globalData.login = true;
-            app.globalData.subscriber.emit('APP_LOGIN')
+            app.initEnvAfterEnsureLogin();
             cb && cb(app.globalData.tokenInfo.token);
           }
         })
@@ -71,16 +62,28 @@ App({
     })
   },
 
+  initEnvAfterEnsureLogin() {
+    var app = this;
+    app.globalData.login = true;
+    app.globalData.subscriber.emit('APP_LOGIN')
+    app.fetchTeamId(app.globalData.options);
+    if (app.globalData.isLogin) {
+      console.log('already login, send sync_done')
+      app.globalData.subscriber.emit('SYNC_DONE', {})
+    } else {
+      console.log('already login app, do login NIM')
+      app.connectNIM();
+    }
+  },
+
   connectNIM: function (cb) {
     var app = this;
     console.log("connect nim", app.globalData.tokenInfo)
-    app.fetchTeamId(app.globalData.options);
     new IMEventHandler(app, {
       token: app.globalData.tokenInfo.nimToken,
       account: app.globalData.tokenInfo.openid
     })
   },
-
 
   fetchTeamId(options) {
     var app = this;

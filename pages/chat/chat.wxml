@@ -2,20 +2,23 @@
 <wxs src="../../utils/tools.wxs" module="tools" />
 
 <view class='page'>
+
   <view class="{{hidden ? 'chat-input hide' : 'chat-input'}}">
     <input placeholder="" 
     confirm-type='send'
     bindconfirm='send' 
     value="{{inputValue}}"  focus="{{focus}}" />
   </view>
-  <view class='bg' bindtap='chatBlur' no-bindtouchmove='touchmove'  no-bindtouchstart='touchstart' no-bindtouchend='touchend'>
+
+  <view class='bg' bindtap='chatBlur'>
     <scroll-view class="msg-list" scroll-y scroll-x="{{false}}" scroll-with-animation scroll-top="{{scrollTop}}">
+    
       <view class="{{hidden ? 'barrage' : 'barrage user-input'}}"  wx:if="{{isBarrage}}">
         <view wx:for="{{barrageData}}" wx:key="{{item.id}}" >
-          <view id="{{item.id}}" wx:if="{{item.show}}" class="{{stop ? 'text stop' : 'text'}}"
-              style="top:{{item.top}}%; line-height:{{item.fontsize}}vh; height:{{item.fontsize}}vh; font-size:{{item.fontsize}}vh; color:{{item.color}}; animation: first {{item.duration}}s linear forwards;"                
+          <view id="{{item.id}}" wx:if="{{item.show}}" class="text"
+              style="{{item.style}}; top:{{item.top}}%; animation: first {{item.duration}}s linear forwards;"                
           >
-              {{item.showText}}
+              {{item.text}}
           </view>
         </view>
       </view>
@@ -23,15 +26,19 @@
 
       <view wx:else>
         <view class='msg' wx:for="{{messageArr}}" wx:key="{{item.time + item.text}}" >
-          <view class='self-msg' wx:if="{{tools.equals(openid, item.from)}}">{{item.showText}}</view>
-          <view wx:else>{{item.showText}}</view>
+          <view class='self-msg' wx:if="{{tools.equals(openid, item.from)}}">{{item.text}}</view>
+          <view wx:else>{{item.text}}</view>
         </view>
       </view>
+
     </scroll-view>
   </view>
 
   <view class='btn-block'>
-    <image class='mode' bindtap='changeMode' src='/images/mode.png'></image>  
-    <image class='chat' bindtap='chatInput' src='/images/chat.png'></image> 
+    <image class='mode' bindtap='changeMode' src='{{modepath}}'></image> 
+    <navigator url='/pages/index/index' >
+    <image src='/images/home.png'></image>  
+    </navigator>
+    <image bindtap='chatInput' src='/images/chat.png'></image> 
   </view>
 </view>

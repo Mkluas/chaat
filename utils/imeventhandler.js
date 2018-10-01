@@ -69,8 +69,8 @@ export default class IMEventHandler {
     })
     app.globalData.NIM = NIM
     // 网络状态变化
-    wx.onNetworkStatusChange(function(res){
-      if(res.isConnected === false) {
+    wx.onNetworkStatusChange(function (res) {
+      if (res.isConnected === false) {
         wx.showToast({
           title: '请检查网络链接状态',
           icon: 'none',
@@ -329,7 +329,7 @@ export default class IMEventHandler {
     // console.log('整理过的黑名单', arr)
     arr.map(item => {
       let temp = {}
-      for(let key in item) {
+      for (let key in item) {
         temp[key] = item[key]
       }
       // 排序使用
@@ -362,7 +362,7 @@ export default class IMEventHandler {
     // 检测的目的就是防止同一账号多端登录，一端发送消息后另一端还会推送
     let account = ''
     let sendOrReceive = ''
-    if(msg.flow === 'out') {
+    if (msg.flow === 'out') {
       account = msg.to
       sendOrReceive = 'send'
     } else if (msg.flow === 'in') {
@@ -401,6 +401,7 @@ export default class IMEventHandler {
       geo: Object.assign({}, msg.geo || {}),
       content: msg['content'] || '',
       tip: msg['tip'] || '',
+      custom: msg['custom'] || {},
       sendOrReceive
     }
     // 发送收到消息更新消息
@@ -410,7 +411,7 @@ export default class IMEventHandler {
     } else {
       app.globalData.subscriber.emit('UPDATE_RECENT_CHAT_ON_MSG', { account: account, time: msg.time, text: msg.text, type })
     }
-    
+
   }
   /**
    * 丢失连接
@@ -444,7 +445,7 @@ export default class IMEventHandler {
             content: '在其他客户端登录，导致被踢',
             confirmText: '重新登录',
             success: (res) => {
-              if(res.confirm) { //点击确定
+              if (res.confirm) { //点击确定
                 app.globalData.nim.disconnect()
                 app.globalData.NIM.rmAllInstances()
                 // 清空本次数据
@@ -487,7 +488,7 @@ export default class IMEventHandler {
     if (msgType != 'addFriend' && msgType != 'deleteFriend' && msgType != 'deleteMsg' && msgType != 'custom') {
       return
     }
-    
+
     let msg = deepClone(sysMsg)
     let account = msg.from
     // 不是操作好友消息时，存储到全局
@@ -495,7 +496,7 @@ export default class IMEventHandler {
       app.globalData.notificationList.push(msg)
     }
     app.globalData.subscriber.emit('RECEIVE_SYSTEM_MESSAGE', msg)
-    
+
     if (msg.type === 'deleteMsg') {
       // 存储到全局 并 存储到最近会话列表中
       let msgTime = msg.msg.time
@@ -512,11 +513,11 @@ export default class IMEventHandler {
         app.globalData.subscriber.emit('UPDATE_RECENT_CHAT', { account: account, type: msg.type, time: msg.time, text: '' })
       }
       app.globalData.subscriber.emit('OPPOSITE_RECALL_WHEN_CHATTING', { account: account, time: msgTime, tip })
-    } else if (msg.type === 'addFriend'){ //第三方将自己加到好友列表
+    } else if (msg.type === 'addFriend') { //第三方将自己加到好友列表
       app.globalData.nim.getUser({
         account: account,
         done: function (err, user) {
-          if(err) {
+          if (err) {
             // console.log(err)
             return
           }
@@ -603,11 +604,12 @@ export default class IMEventHandler {
           geo: Object.assign({}, msg.geo || {}),
           content: msg['content'] || '',
           tip: msg['tip'] || '',
+          custom: msg['custom'] || {},
           sendOrReceive
         }
         app.globalData.rawMessageList[account] = app.globalData.rawMessageList[account] || {}
         app.globalData.rawMessageList[account][msg.time] = deepClone(msg)
-        
+
         // 存储数据到最近会话列表
         app.globalData.recentChatList[account] = app.globalData.recentChatList[account] || {}
         app.globalData.recentChatList[account][msg.time] = {
@@ -620,6 +622,7 @@ export default class IMEventHandler {
           geo: Object.assign({}, msg.geo || {}),
           content: msg['content'] || '',
           tip: msg['tip'] || '',
+          custom: msg['custom'] || {},
           sendOrReceive
         }
         app.globalData.subscriber.emit('RECEIVE_P2P_MESSAGE', { account: account, time: msg.time })
@@ -647,7 +650,7 @@ export default class IMEventHandler {
       // if (msg['scene'] && msg['scene'] !== 'p2p') {
       //   continue;
       // }
-      
+
       let sendOrReceive = ''
       let account = ''
       let type = ''
@@ -679,6 +682,7 @@ export default class IMEventHandler {
         geo: Object.assign({}, msg.geo || {}),
         content: msg['content'] || '',
         tip: msg['tip'] || '',
+        custom: msg['custom'] || {},
         sendOrReceive
       }
       app.globalData.rawMessageList[account] = app.globalData.rawMessageList[account] || {}
@@ -696,6 +700,7 @@ export default class IMEventHandler {
         geo: Object.assign({}, msg.geo || {}),
         content: msg['content'] || '',
         tip: msg['tip'] || '',
+        custom: msg['custom'] || {},
         sendOrReceive
       }
 
@@ -712,9 +717,9 @@ export default class IMEventHandler {
     if (session.scene != 'p2p') {
       return
     }
-    if(session.unread == 0) {// 其他端已已读未读会话
+    if (session.unread == 0) {// 其他端已已读未读会话
       // 清除未读会话
-      app.globalData.subscriber.emit('CLEAR_UNREAD_RECENTCHAT_UPDATESESSION', { account: session.to})
+      app.globalData.subscriber.emit('CLEAR_UNREAD_RECENTCHAT_UPDATESESSION', { account: session.to })
     }
   }
   /**
@@ -723,7 +728,7 @@ export default class IMEventHandler {
    */
   onOfflineMsgs(obj) {
     console.log('onOfflineMsgs');
-    let {to, scene, msgs} = obj
+    let { to, scene, msgs } = obj
     if (scene != 'p2p') { // 暂时不处理其他类型消息
       console.log(msgs);
       return
@@ -766,6 +771,7 @@ export default class IMEventHandler {
         geo: Object.assign({}, msg.geo || {}),
         content: msg['content'] || '',
         tip: msg['tip'] || '',
+        custom: msg['custom'] || {},
         sendOrReceive
       }
       app.globalData.rawMessageList[account] = app.globalData.rawMessageList[account] || {}
@@ -783,6 +789,7 @@ export default class IMEventHandler {
         geo: Object.assign({}, msg.geo || {}),
         content: msg['content'] || '',
         tip: msg['tip'] || '',
+        custom: msg['custom'] || {},
         sendOrReceive
       }
     })
@@ -857,69 +864,69 @@ export default class IMEventHandler {
      */
     // console.log('onUsers')
   }
-  onMutelist (mutelist) {
+  onMutelist(mutelist) {
     // []
     // console.log('onMutelist')
     // console.log(mutelist)
   }
-  onMarkInMutelist (obj) {
+  onMarkInMutelist(obj) {
     // console.log('onMarkInMutelist')
     // console.log(obj)
   }
-  
-  onSyncFriendAction (obj) {
+
+  onSyncFriendAction(obj) {
     // console.log('onSyncFriendAction')
     // console.log(obj)
   }
-  onUpdateUser (user) {
+  onUpdateUser(user) {
     // console.log('onUpdateUser')
     // console.log(user)
   }
-  onTeams (teams) {
+  onTeams(teams) {
     // console.log('onTeams')
     // console.log(teams)
   }
-  onCreateTeam (team) {
+  onCreateTeam(team) {
     // console.log('onCreateTeam')
     // console.log(team)
   }
-  onTeamMembers (teamId, members) {
+  onTeamMembers(teamId, members) {
     // console.log('onTeamMembers')
     // console.log(teamId, members)
   }
-  onUpdateTeamMember (teamMember) {
+  onUpdateTeamMember(teamMember) {
     // console.log('onUpdateTeamMember')
     // console.log(teamMember)
   }
   // 系统通知
-  onOfflineSysMsgs () {
+  onOfflineSysMsgs() {
     // console.log('onOfflineSysMsgs')
     // console.log()
   }
-  onUpdateSysMsg (sysMsg) {
+  onUpdateSysMsg(sysMsg) {
     // console.log('onUpdateSysMsg')
     // console.log(sysMsg)
   }
-  onSysMsgUnread (obj) {
+  onSysMsgUnread(obj) {
     // console.log('onSysMsgUnread')
     // console.log(obj)
   }
-  onUpdateSysMsgUnread (obj) {
+  onUpdateSysMsgUnread(obj) {
     // console.log('onUpdateSysMsgUnread')
     // console.log(obj)
   }
-  onOfflineCustomSysMsgs (sysMsg) {
+  onOfflineCustomSysMsgs(sysMsg) {
     // console.log('onOfflineCustomSysMsgs')
     // console.log(sysMsg)
   }
   // 收到广播消息
-  onBroadcastMsg (msg) {
+  onBroadcastMsg(msg) {
     // console.log('onBroadcastMsg')
     // console.log(msg)
   }
-  onBroadcastMsgs (msg) {
+  onBroadcastMsgs(msg) {
     // console.log('onBroadcastMsgs')
     // console.log(msg)
   }
-  
+
 }

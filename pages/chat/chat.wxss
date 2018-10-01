@@ -19,14 +19,12 @@
 }
 
 .bg {
-  /* background-color: gold; */
   width: 100vw;
   min-height: 100vh;
 }
 
 .msg-list {
   width: 100%;
-  /* padding: 0 5vw; */
   height: 85vh
 }
 
@@ -38,10 +36,6 @@
   padding: 0 5vw;
   margin-bottom: 5px;
   font-size: 4.5vw;
-}
-
-.self-msg {
-  color: orange;
 }
 
 .barrage {
@@ -59,18 +53,18 @@
   perspective: 1000;
 }
 
+
 /**定义从右边向左边的移动的动画**/
 @keyframes first{
-  from{left: 100vw; }
-  to{left: -100vw;}
-}
-
-.stop {
-  animation-play-state: paused;
+  from{left: 100vw;}
+  to{left: -500vw;}
 }
 
 .btn-block {
   position: fixed;
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
   bottom: 6vw;
   width: 100vw;
   height: 15vw;
@@ -80,8 +74,4 @@
   width: 15vw;
   height: 15vw;
   padding: 0 6vw;
-}
-
-.chat {
-  float: right;
 }
