@@ -74,6 +74,7 @@ App({
       console.log('already login app, do login NIM')
       app.connectNIM();
     }
+    app.getTeams(true);
   },
 
   connectNIM: function (cb) {
@@ -98,7 +99,7 @@ App({
             data: res,
             success: function (d) {
               app.globalData.group = d.group;
-              app.globalData.subscriber.emit('TEAM_ID', app.globalData.group.teamId)
+              app.globalData.subscriber.emit('TEAM_ID', app.globalData.group)
             }
           })
         }
@@ -106,6 +107,23 @@ App({
     } else {
       console.log('shareTicket is null')
       app.globalData.subscriber.emit('TEAM_ID_NOT_FOUND')
+    }
+  },
+
+  getTeams: function(refresh, cb) {
+    var app = this;
+    if (refresh || app.globalData.teams.length < 1) {
+      request.get({
+        app: app,
+        url: '/ma/group/list',
+        success: function (d) {
+          app.globalData.teams = d.teams
+          cb && cb(d.teams);
+        }
+      })
+    } else {
+      console.log(app.globalData.teams)
+      cb && cb(app.globalData.teams);
     }
   },
 
@@ -119,6 +137,7 @@ App({
   globalData:{
     login: false,
     tokenInfo: {},
+    teams: [],
     options: {},
 
     isLogin: false, // 当前是否是登录状态

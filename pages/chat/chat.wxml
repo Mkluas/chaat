@@ -11,8 +11,11 @@
   </view>
 
   <view class='bg' bindtap='chatBlur'>
+    <view class='theme'>
+      <view class='theme-text'>{{theme}}</view>
+    </view>
     <scroll-view class="msg-list" scroll-y scroll-x="{{false}}" scroll-with-animation scroll-top="{{scrollTop}}">
-    
+
       <view class="{{hidden ? 'barrage' : 'barrage user-input'}}"  wx:if="{{isBarrage}}">
         <view wx:for="{{barrageData}}" wx:key="{{item.id}}" >
           <view id="{{item.id}}" wx:if="{{item.show}}" class="text"
@@ -36,8 +39,8 @@
 
   <view class='btn-block'>
     <image class='mode' bindtap='changeMode' src='{{modepath}}'></image> 
-    <navigator url='/pages/index/index' >
-    <image src='/images/home.png'></image>  
+    <navigator url='/pages/index/index' open-type='{{back}}' delta="1" >
+      <image src='/images/home.png'></image>  
     </navigator>
     <image bindtap='chatInput' src='/images/chat.png'></image> 
   </view>

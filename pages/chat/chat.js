@@ -15,6 +15,7 @@ Page({
     openid: app.globalData.tokenInfo.openid,
     hasTeamId: false,
     teamId: 0,
+    groupId: 0,
     syncFinish: false,
     scrollTop: 0,
     isBarrage: false,
@@ -25,6 +26,8 @@ Page({
     load: false,
     modepath: '/images/mode.png',
     coverpath: '/images/cover.png',
+    theme: 'SGNL',
+    back: 'redirect',
 
     focus: false,
     hidden: true,
@@ -54,8 +57,8 @@ Page({
 
   send: function (e) {
     var text = e.detail.value;
-    if (checkSendText(text, this)) {
-      this.sendRequest(text)
+    if (checkSendText(text, this, app, this.data.groupId)) {
+      // this.sendRequest(text)
     }
     this.chatBlur();
   },
@@ -78,10 +81,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    wx.showShareMenu({ withShareTicket: true })
-
+    console.log('onload', options);
+    
+    wx.showShareMenu({ withShareTicket: true})
     var self = this;
-    wx.hideLoading();
+    self.setData({ back: (options.back ? "navigateBack" : "redirect") });
+
     wx.getSystemInfo({
       success: function (res) {
         var width = res.windowWidth;
@@ -104,11 +109,12 @@ Page({
       // }
     })
 
-    app.globalData.subscriber.on('TEAM_ID', (tid) => {
-      self.setData({ hasTeamId: true, teamId: tid, chatTo: tid })
-      console.log('teamId', tid);
+    app.globalData.subscriber.on('TEAM_ID', (group) => {
+      self.setData({ hasTeamId: true, teamId: group.teamId, chatTo: group.teamId, 
+                      theme: group.theme, groupId: group.id })
+      console.log('teamId', self.data.teamId);
       if (self.data.syncFinish) {
-        self.doLoad({ 'chatTo': tid });
+        self.doLoad({ 'chatTo': self.data.teamId });
       }
     })
 
@@ -119,8 +125,20 @@ Page({
     });
 
     if (app.globalData.isLogin && options.chatTo) {
-      self.setData({ hasTeamId: true, teamId: options.chatTo, chatTo: options.chatTo })
-      self.doLoad(options);
+      app.getTeams(false, function(teams) {
+        var array = teams.filter((value, index, array) => {
+          return value.team_id == options.chatTo;
+        });
+        if (array.length > 0) {
+          var group = array[0];
+          self.setData({
+            hasTeamId: true, teamId: group.team_id, chatTo: group.team_id,
+            theme: group.theme, groupId: group.id
+          })
+          self.doLoad({ 'chatTo': self.data.teamId });
+        }
+      });
+      
     }
 
   },

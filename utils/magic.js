@@ -51,6 +51,9 @@ function handleMagic(text) {
 		extrcCustomInfo(text, color_suffix_array, custom, 'color')
 		extrcCustomInfo(text, size_suffix_array, custom, 'size')
 	}
+	if (!custom.color) {
+		custom.color = randomColor;
+	}
 	return custom;
 }
 

@@ -1,3 +1,5 @@
+const request = require('./request.js')
+
 function requestCover(text, cb) {
     wx.getImageInfo({
       src: encodeURI("https://molibao.cc/api/cover?text=" + text),
@@ -15,7 +17,7 @@ function requestCover(text, cb) {
     })
 }
 
-function checkSendText(text, page) {
+function checkSendText(text, page, app, groupId) {
     if (text.length > 30) {
       wx.showToast({
         title: '长度不能大于30',
@@ -24,11 +26,19 @@ function checkSendText(text, page) {
       return false;
     }
 
-    if (endWith(text, '#主题')) {
-      var covertext = removeEnd(text, '#主题')
+    if (startWith(text, '$话题$')) {
+      var covertext = removeStart(text, '$话题$')
       if (covertext.length > 0) {
+        wx.showLoading({title: '更新话题'});
         requestCover(covertext, function(path) {
-          page.setData({coverpath: path});
+          page.setData({coverpath: path, theme: covertext});
+
+          request.post({
+            app: app,
+            url: "/ma/group/theme",
+            data: {groupId: groupId, theme: covertext}
+          })
+
         });
         return false;
       }
@@ -36,19 +46,27 @@ function checkSendText(text, page) {
     return true;
 }
 
-function endWith(text, suffix) {
-  if (text.length <= suffix.length) {
+function startWith(text, prffix) {
+  if (text.length < prffix.length) {
     return false;
   } else {
-    return suffix === text.substring(text.length - suffix.length)
+    return prffix === text.substring(0, prffix.length)
   }
 }
 
-function removeEnd(text, suffix) {
-  return text.substring(0, text.length - suffix.length)
+function removeStart(text, prffix) {
+  return text.substring(prffix.length)
+}
+
+function removeThemePrefix(text) {
+    if (startWith(text, "$话题$")) {
+        return removeStart(text, "$话题$")
+    }
+    return text;
 }
 
 module.exports = {
     requestCover,
-    checkSendText
+    checkSendText,
+    removeThemePrefix
 }

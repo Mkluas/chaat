@@ -31,7 +31,7 @@ const initDefaultOptions = options => {
     options.loading = true;
   }
 
-  if (getApp().globalData.tokenInfo) {
+  if (options.app.globalData.tokenInfo) {
     if (!options.data) {
       options.data = {}
     }

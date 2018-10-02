@@ -1,19 +1,30 @@
 <!--index.wxml-->
 <view class="page">
 
-  <view wx:if="{{teams.length < 1}}">
-    <text class='welcome'>欢迎使用 SGNL</text>
+  <view class="{{hidden ? 'chat-input hide' : 'chat-input'}}">
+    <input placeholder="" 
+    confirm-type='send'
+    bindconfirm='send' 
+    value="{{inputValue}}"  focus="{{focus}}" />
   </view>
-  <view class='team-list' wx:else>
-    <navigator wx:for="{{teams}}" wx:key="{{item.teamId}}" class='team' url="/pages/chat/chat?chatTo={{item.teamId}}">
-      <view class='groupName'>
-        <open-data type="groupName" open-gid="{{item.groupId}}" />
-      </view>
-    </navigator>
+ 
+  <view class='bg' bindtap='chatBlur'>
+    <view wx:if="{{teams.length < 1}}">
+      <text class='welcome'>欢迎使用 SGNL</text>
+    </view>
+
+    <view class='team-list'  wx:else>
+      <navigator wx:for="{{teams}}" wx:key="{{item.team_id}}" class='team' url="/pages/chat/chat?back=true&chatTo={{item.team_id}}">
+        <view class='groupName'>
+          <open-data type="groupName" open-gid="{{item.group_id}}" />
+        </view>
+      </navigator>
+    </view>
   </view>
+ 
 
   <text class='tip' wx:if="{{teams.length < 1}}">请点击下方按钮开始会话</text>
-  <button open-type='share'>
+  <button open-type='share' f-bindtap='chatInput'>
     <image class='create'  src='/images/create.png'></image> 
   </button>
 </view>

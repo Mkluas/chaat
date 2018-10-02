@@ -1,14 +1,39 @@
 //获取应用实例
 const request = require('../../utils/request.js')
+import { removeThemePrefix } from '../../utils/lang.js'
 const app = getApp()
 
 Page({
   data: {
-    teams: []
+    teams: [],
+    focus: false,
+    hidden: true,
+    inputValue: '',
+    theme: "SGNL"
   },
+
   bindViewTap: function() {
    
   },
+
+  send: function (e) {
+    var text = e.detail.value;
+    console.log('text', removeThemePrefix(text));
+    this.setData({ theme: removeThemePrefix(text)});
+    this.chatBlur();
+    this.onShareAppMessage();
+  },
+
+  chatInput: function () {
+    this.setData({ focus: true, hidden: false, inputValue: '$话题$开始爆料本群的秘密' })
+  },
+
+  chatBlur: function (e) {
+    if (this.data.focus) {
+      this.setData({ focus: false, hidden: true, inputValue: '' })
+    }
+  },
+
   onLoad: function () {
     var self = this;
     wx.showShareMenu({
@@ -32,12 +57,8 @@ Page({
 
   loadTeams: function() {
     var self = this;
-    request.get({
-      app: app,
-      url: '/ma/group/list',
-      success: function(d) {
-        self.setData({ teams: d.teams })
-      }
+    app.getTeams(false, function(teams) {
+      self.setData({ teams: teams })
     })
   },
 
