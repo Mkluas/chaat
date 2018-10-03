@@ -39,11 +39,28 @@ function checkSendText(text, page, app, groupId) {
             data: {groupId: groupId, theme: covertext}
           })
 
+          updateTheme(app, page.data.chatTo, covertext);
         });
         return false;
       }
     } 
     return true;
+}
+
+function updateTheme(app, chatTo, theme) {
+    app.globalData.nim.sendCustomMsg({
+      scene: 'team',
+      to: chatTo,
+      content: JSON.stringify({"theme": theme}),
+      done: function (err, msg) {
+        if (err) {
+            console.log('updateTheme err: ', err);
+            return;
+        } else {
+            console.log('updateTheme success')
+        }
+      }
+    })
 }
 
 function startWith(text, prffix) {

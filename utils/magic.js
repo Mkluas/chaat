@@ -78,7 +78,6 @@ function recoverMagicStyle(custom) {
 		if (custom.indexOf('{') < 0) {
 			custom = {}
 		} else {
-			console.log(custom);
 			custom = JSON.parse(custom)
 		}
 	}
@@ -95,7 +94,6 @@ function recoverMagicDuration(custom) {
 		if (custom.indexOf('{') < 0) {
 			custom = {}
 		} else {
-			console.log(custom);
 			custom = JSON.parse(custom)
 		}
 	}

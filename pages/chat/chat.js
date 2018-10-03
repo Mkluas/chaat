@@ -1,4 +1,5 @@
 // pages/chat/chat.js
+const request = require('../../utils/request.js')
 import { generateFingerGuessImageFile, generateBigEmojiImageFile, generateRichTextNode, generateImageNode, calcTimeHeader } from '../../utils/util.js'
 import { deepClone, clickLogoJumpToCard } from '../../utils/util.js'
 import * as iconBase64Map from '../../utils/imageBase64.js'
@@ -28,6 +29,7 @@ Page({
     coverpath: '/images/cover.png',
     theme: 'SGNL',
     back: 'redirect',
+    hasFormid: false,
 
     focus: false,
     hidden: true,
@@ -77,6 +79,20 @@ Page({
     }
   },
 
+  formSubmit: function (e) {
+    this.chatInput();
+    if (!this.data.hasFormid && e.detail.formId) {
+      var self = this;
+      request.post({
+        app: app,
+        url: '/ma/group/formid',
+        data: { teamId:  self.data.teamId, formId: e.detail.formId },
+        success: function() {self.setData({hasFormid: true})},
+        fail: function () { }
+      })
+    }
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
@@ -101,12 +117,12 @@ Page({
 
     app.globalData.subscriber.on('SYNC_DONE', () => {
       self.setData({ syncFinish: true, openid: app.globalData.tokenInfo.openid })
-      self.doLoad({ 'chatTo': '1380348919' })
-      // console.log('sync finish!');
-      // console.log('hasTeamId', self.data.hasTeamId);
-      // if (self.data.hasTeamId) {
-      //   self.doLoad({ 'chatTo': self.data.teamId });
-      // }
+      // self.doLoad({ 'chatTo': '1380348919' })
+      console.log('sync finish!');
+      console.log('hasTeamId', self.data.hasTeamId);
+      if (self.data.hasTeamId) {
+        self.doLoad({ 'chatTo': self.data.teamId });
+      }
     })
 
     app.globalData.subscriber.on('TEAM_ID', (group) => {
@@ -126,9 +142,7 @@ Page({
 
     if (app.globalData.isLogin && options.chatTo) {
       app.getTeams(false, function(teams) {
-        var array = teams.filter((value, index, array) => {
-          return value.team_id == options.chatTo;
-        });
+        var array = teams.filter((g) => g.team_id == options.chatTo);
         if (array.length > 0) {
           var group = array[0];
           self.setData({
@@ -138,13 +152,12 @@ Page({
           self.doLoad({ 'chatTo': self.data.teamId });
         }
       });
-      
+
     }
 
   },
 
   insertMsg: function (msg, time) {
-    console.log('msg', msg)
     var insertNewMsg = {
       type: 'text',
       from: msg.from,
@@ -187,7 +200,7 @@ Page({
     if (Object.keys(loginMessageList).length != 0) {
       let chatToMessageList = loginMessageList[chatTo]
       for (let time in chatToMessageList) {
-        console.log(chatToMessageList[time])
+        // console.log(chatToMessageList[time])
         let msgType = chatToMessageList[time].type
         if (msgType === 'text') {
           self.insertMsg(chatToMessageList[time], time)
@@ -211,7 +224,6 @@ Page({
       let newMessage = app.globalData.messageList[loginUserAccount][account][time]
       let lastMessage = self.data.messageArr[self.data.messageArr.length - 1]
 
-      console.log("last", lastMessage)
       if (lastMessage && time == lastMessage.time && newMessage.text == lastMessage.text) {
         return;
       }
@@ -219,6 +231,15 @@ Page({
       let displayTimeHeader = ''
       if (newMessage.type === 'text') {
         this.insertMsg(newMessage, time);
+      } else if (newMessage.type === 'custom') {
+        console.log('custom', newMessage)
+        app.getTeams(true, function (teams) {
+          var array = teams.filter((value) => value.team_id == self.data.chatTo);
+          if (array.length > 0) {
+            var group = array[0];
+            self.setData({theme: group.theme})
+          }
+        });
       }
 
       // 添加全局数据中 消息时间头，同时存储到最近会话列表中
@@ -257,6 +278,13 @@ Page({
           return
         }
         self.insertMsg(msg, msg.time);
+
+        request.post({
+          app: app,
+          url: '/ma/group/notice',
+          data: { teamId: self.data.teamId},
+          fail: function () {}
+        })
 
         // 存储到全局 并 存储到最近会话列表中
         self.saveMsgToGlobalAndRecent(msg, {
