@@ -639,7 +639,7 @@ export default class IMEventHandler {
    * {scene:"team",sessionId:"team-3944051",timetag:,to:"3944051",msgs:[{from:'wujie',text:'222',to:'cs4'}]}
    */
   onRoamingMsgs(obj) {
-    // console.log('onRoamingMsgs',obj)
+    console.log('onRoamingMsgs',obj)
     // if(obj.scene != 'p2p') {
     //   return
     // }

@@ -28,7 +28,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 2,
 			"list": [
 				{
 					"id": -1,
@@ -48,6 +48,13 @@
 						"shareName": "CdR0CUgxTwJNmbi6Vn_VDgwfNJl0Fi8QDHaR707rZFU@cr4dev",
 						"shareKey": "a_QHt9W6IDBM1RzV_6UILXrU-OSNozj_iDmVtmdLPXZvFNFp0BOsS6_JOiVo854oNWg2VPuSekTDdQ2Y6XBSOg~~"
 					}
+				},
+				{
+					"id": 2,
+					"name": "create",
+					"pathName": "pages/create/create",
+					"query": "",
+					"scene": "1001"
 				}
 			]
 		}

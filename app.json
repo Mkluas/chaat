@@ -1,5 +1,5 @@
 {
-  "pages":[
+  "pages": [
     "pages/index/index",
     "pages/chat/chat",
     "pages/login/login",
@@ -17,12 +17,13 @@
     "partials/chating/chating",
     "partials/forwardcontact/forwardcontact",
     "components/emoji/emoji",
-    "components/inputclear/inputclear"
+    "components/inputclear/inputclear",
+    "pages/create/create"
   ],
-  "window":{
+  "window": {
     "backgroundColor": "#fff",
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "",
-    "navigationBarTextStyle":"black"
+    "navigationBarTextStyle": "black"
   }
 }

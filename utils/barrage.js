@@ -2,6 +2,9 @@ class Queue {
   constructor() {
     this.list = [];
   }
+  putHead(data) {
+    splice(0,0,data)
+  }
   enqueue(data) {
     if (data) {
       this.list.push(data);
@@ -37,6 +40,7 @@ class Barrage {
 
   constructor(dataChangeCb, query, width) {
     this.queue = new Queue()
+    this.newq = new Queue()
     this.dataChangeCb = dataChangeCb
     this.bulletList = []
     this.lock = false;
@@ -45,6 +49,7 @@ class Barrage {
     this.query = query;
     this.clearRun = false;
     this.screenWidth = width;
+    this.load = false;
   }
 
   close() {
@@ -58,11 +63,13 @@ class Barrage {
 
   reload(messageArr) {
     this.initInterval();
+    this.load = false;
     this.bulletList = []
-    var i = (messageArr.length > 10) ? messageArr.length - 10 : 0
+    var i = (messageArr.length > 50) ? messageArr.length - 50 : 0
     for (; i < messageArr.length; i++) {
       this.pushBullet(messageArr[i]);
     }
+    this.load = true;
   }
 
   initInterval() {
@@ -115,22 +122,34 @@ class Barrage {
     var top = 0;
     var bullet = new Bullet(id, msg.text, top, msg.duration, msg.style);
     console.log(bullet)
-    this.queue.enqueue(bullet);
+
+    if (this.load) {
+      this.newq.enqueue(bullet);
+    } else {
+      this.queue.enqueue(bullet);
+    }
+    
     this.controlBulletDisplay();
   }
 
   controlBulletDisplay() {
-    if (this.queue.isEmpty() || this.lock) {
+    if ((this.queue.isEmpty() && this.newq.isEmpty()) || this.lock) {
       return;
     }
     this.lock = true;
 
     var change = false;
-    for (let i = 0; i < this.lines.length && !this.queue.isEmpty(); i++) {
+    for (let i = 0; i < this.lines.length && !(this.queue.isEmpty() && this.newq.isEmpty()); i++) {
       if (!this.lines[i]) {
         change = true;
         this.lines[i] = true;
-        var bullet = this.queue.dequeue();
+        var bullet;
+        if (this.newq.isEmpty()) {
+          bullet = this.queue.dequeue();
+          bullet.style = bullet.style + "opacity:0.5"
+        } else {
+          bullet = this.newq.dequeue();
+        }
         bullet.line = i;
         bullet.top = i * 18 + 5;
         console.log('push ', i)

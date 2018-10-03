@@ -1,0 +1,14 @@
+<!--pages/create/create.wxml-->
+<view class='page'>
+
+  <view class='theme'>
+    <input placeholder="" 
+    confirm-type='send'
+    bindconfirm='send' 
+    value="{{inputValue}}"  focus="{{focus}}" />
+  </view>
+
+  <button open-type='share' bindtap='chatInput'>
+    <image class='create'  src='/images/next.png'></image> 
+  </button>
+</view>

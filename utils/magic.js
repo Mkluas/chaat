@@ -52,7 +52,7 @@ function handleMagic(text) {
 		extrcCustomInfo(text, size_suffix_array, custom, 'size')
 	}
 	if (!custom.color) {
-		custom.color = randomColor;
+		custom.color = randomColor();
 	}
 	return custom;
 }

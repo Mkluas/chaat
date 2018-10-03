@@ -58,7 +58,7 @@ Page({
   send: function (e) {
     var text = e.detail.value;
     if (checkSendText(text, this, app, this.data.groupId)) {
-      // this.sendRequest(text)
+      this.sendRequest(text)
     }
     this.chatBlur();
   },
@@ -144,6 +144,7 @@ Page({
   },
 
   insertMsg: function (msg, time) {
+    console.log('msg', msg)
     var insertNewMsg = {
       type: 'text',
       from: msg.from,
@@ -160,7 +161,7 @@ Page({
       messageArr: [...this.data.messageArr, insertNewMsg]
     })
     if (this.data.isBarrage) {
-      this.barrage.pushBullet(msg);
+      this.barrage.pushBullet(insertNewMsg);
     }
   },
 

@@ -93,6 +93,7 @@ App({
         shareTicket: options['shareTicket'],
         success: function (res) {
           res['userId'] = options.query['userId'];
+          res['theme'] = options.theme;
           request.post({
             app: app,
             url: "/ma/group/decrypt",
