@@ -123,7 +123,6 @@ App({
         }
       })
     } else {
-      console.log(app.globalData.teams)
       cb && cb(app.globalData.teams);
     }
   },

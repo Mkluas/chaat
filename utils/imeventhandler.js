@@ -446,28 +446,29 @@ export default class IMEventHandler {
             confirmText: '重新登录',
             success: (res) => {
               if (res.confirm) { //点击确定
-                app.globalData.nim.disconnect()
-                app.globalData.NIM.rmAllInstances()
-                // 清空本次数据
-                app.globalData.isLogin = false
-                app.globalData.currentChatTo = ''
-                app.globalData.friends = []
-                app.globalData.friendsCard = {}
-                app.globalData.friendsWithCard = {}
-                app.globalData.loginUser = {}
-                app.globalData.messageList = {}
-                app.globalData.nim = {}
-                app.globalData.notificationList = []
-                app.globalData.onlineList = []
-                app.globalData.blackList = {}
-                app.globalData.rawMessageList = {}
-                app.globalData.recentChatList = {}
-                app.globalData.subscriber.clear()
-                wx.clearStorage()
-                // wx.closeSocket({})
-                wx.reLaunch({
-                  url: '/pages/login/login',
-                })
+                app.doLogin();
+                // app.globalData.nim.disconnect()
+                // app.globalData.NIM.rmAllInstances()
+                // // 清空本次数据
+                // app.globalData.isLogin = false
+                // app.globalData.currentChatTo = ''
+                // app.globalData.friends = []
+                // app.globalData.friendsCard = {}
+                // app.globalData.friendsWithCard = {}
+                // app.globalData.loginUser = {}
+                // app.globalData.messageList = {}
+                // app.globalData.nim = {}
+                // app.globalData.notificationList = []
+                // app.globalData.onlineList = []
+                // app.globalData.blackList = {}
+                // app.globalData.rawMessageList = {}
+                // app.globalData.recentChatList = {}
+                // app.globalData.subscriber.clear()
+                // wx.clearStorage()
+                // // wx.closeSocket({})
+                // wx.reLaunch({
+                //   url: '/pages/login/login',
+                // })
               }
             }
           })
@@ -639,7 +640,7 @@ export default class IMEventHandler {
    * {scene:"team",sessionId:"team-3944051",timetag:,to:"3944051",msgs:[{from:'wujie',text:'222',to:'cs4'}]}
    */
   onRoamingMsgs(obj) {
-    console.log('onRoamingMsgs',obj)
+    // console.log('onRoamingMsgs',obj)
     // if(obj.scene != 'p2p') {
     //   return
     // }

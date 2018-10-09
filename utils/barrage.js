@@ -146,7 +146,8 @@ class Barrage {
         var bullet;
         if (this.newq.isEmpty()) {
           bullet = this.queue.dequeue();
-          bullet.style = bullet.style + "opacity:0.5"
+          bullet.style = bullet.style + "opacity:0.8";
+          // bullet.duration += Math.random();
         } else {
           bullet = this.newq.dequeue();
         }

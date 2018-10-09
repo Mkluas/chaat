@@ -59,7 +59,7 @@ Page({
 
   send: function (e) {
     var text = e.detail.value;
-    if (checkSendText(text, this, app, this.data.groupId)) {
+    if (checkSendText(text, this, app, this.data.teamId)) {
       this.sendRequest(text)
     }
     this.chatBlur();
@@ -127,7 +127,7 @@ Page({
 
     app.globalData.subscriber.on('TEAM_ID', (group) => {
       self.setData({ hasTeamId: true, teamId: group.teamId, chatTo: group.teamId, 
-                      theme: group.theme, groupId: group.id })
+                      theme: group.theme, groupId: group.group_id })
       console.log('teamId', self.data.teamId);
       if (self.data.syncFinish) {
         self.doLoad({ 'chatTo': self.data.teamId });
@@ -145,9 +145,10 @@ Page({
         var array = teams.filter((g) => g.team_id == options.chatTo);
         if (array.length > 0) {
           var group = array[0];
+          console.log(group)
           self.setData({
             hasTeamId: true, teamId: group.team_id, chatTo: group.team_id,
-            theme: group.theme, groupId: group.id
+            theme: group.theme, groupId: group.group_id
           })
           self.doLoad({ 'chatTo': self.data.teamId });
         }

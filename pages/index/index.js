@@ -18,17 +18,17 @@ Page({
         console.log('share', res)
       }
     })
+  },
 
+  onShow: function() {
+    var self = this;
     if (app.globalData.login) {
       self.loadTeams();
     } else {
-      console.log('subscribe APP_LOGIN')
       app.globalData.subscriber.on('APP_LOGIN', () => {
-        console.log('APP login')
         self.loadTeams();
       });
     }
-
   },
 
   loadTeams: function() {

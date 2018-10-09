@@ -99,7 +99,7 @@ function recoverMagicDuration(custom) {
 	}
 
 	var speed = custom.speed || 0;
-	return 20 - (speed * 2);
+  return 20 - (speed * 2);
 }
 
 function randomColor() {

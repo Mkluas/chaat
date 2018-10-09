@@ -17,7 +17,7 @@ function requestCover(text, cb) {
     })
 }
 
-function checkSendText(text, page, app, groupId) {
+function checkSendText(text, page, app, teamId) {
     if (text.length > 30) {
       wx.showToast({
         title: '长度不能大于30',
@@ -36,9 +36,15 @@ function checkSendText(text, page, app, groupId) {
           request.post({
             app: app,
             url: "/ma/group/theme",
-            data: {groupId: groupId, theme: covertext}
+            data: {teamId: teamId, theme: covertext},
+            success: function() {
+              app.globalData.teams
+              .filter((g) => g.team_id == teamId)
+              .forEach(g => g.theme = covertext)
+              console.log(app.globalData.teams);
+            }
           })
-
+          
           updateTheme(app, page.data.chatTo, covertext);
         });
         return false;
