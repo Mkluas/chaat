@@ -33,6 +33,7 @@ class Bullet {
     this.duration = duration;
     this.style = style;
     this.show = true;
+    this.toggle = false;
   }
 }
 
@@ -87,14 +88,22 @@ class Barrage {
         self.query.exec(function (res) {
           var allClear = true;
           res[0].forEach(r => {
-            if (r.left + r.width < 0) {
+            if (r.left + r.width < (self.screenWidth / 2)) {
+
               var index = self.bulletList.findIndex(d => d.id == r.id);
               if (index < 0) return;
               var bullet = self.bulletList[index];
               if (!bullet.show) return;
-              self.lines[bullet.line] = false;
-              bullet.show = false;
+
+              if (!bullet.toggle) {
+                bullet.toggle = true;
+                self.lines[bullet.line] = false;
+              }
+              if (r.left + r.width < 0) {
+                bullet.show = false;
+              }
               self.controlBulletDisplay(bullet.line, (new Date()).getTime());
+
             } else {
               allClear = false;
             }
