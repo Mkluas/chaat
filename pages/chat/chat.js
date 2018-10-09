@@ -16,7 +16,6 @@ Page({
     openid: app.globalData.tokenInfo.openid,
     hasTeamId: false,
     teamId: 0,
-    groupId: 0,
     syncFinish: false,
     scrollTop: 0,
     isBarrage: false,
@@ -127,7 +126,7 @@ Page({
 
     app.globalData.subscriber.on('TEAM_ID', (group) => {
       self.setData({ hasTeamId: true, teamId: group.teamId, chatTo: group.teamId, 
-                      theme: group.theme, groupId: group.group_id })
+                      theme: group.theme })
       console.log('teamId', self.data.teamId);
       if (self.data.syncFinish) {
         self.doLoad({ 'chatTo': self.data.teamId });
@@ -148,7 +147,7 @@ Page({
           console.log(group)
           self.setData({
             hasTeamId: true, teamId: group.team_id, chatTo: group.team_id,
-            theme: group.theme, groupId: group.group_id
+            theme: group.theme
           })
           self.doLoad({ 'chatTo': self.data.teamId });
         }
