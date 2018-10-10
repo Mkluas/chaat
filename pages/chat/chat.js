@@ -29,6 +29,7 @@ Page({
     theme: 'SGNL',
     back: 'redirect',
     hasFormid: false,
+    hasLoadBarrage: false,
 
     focus: false,
     hidden: true,
@@ -52,7 +53,10 @@ Page({
       this.barrage.close();
     } else {
       this.setData({ isBarrage: true, modepath: '/images/barrage.png' })
-      this.barrage.reload(this.data.messageArr)
+      if (!this.data.hasLoadBarrage) {
+        this.setData({ hasLoadBarrage: true })
+        this.barrage.reload(this.data.messageArr)
+      }
     }
   },
 
@@ -66,6 +70,7 @@ Page({
 
   chatInput: function () {
     this.setData({ focus: true, hidden: false, scrollTop: 10000 })
+    this.receipt();
   },
 
   scrollToBottom: function () {
@@ -76,6 +81,19 @@ Page({
     if (this.data.focus) {
       this.setData({ focus: false, hidden: true, inputValue: '' })
     }
+  },
+
+  receipt: function() {
+    app.globalData.nim.sendTeamMsgReceipt({
+      teamMsgReceipts: [{
+        teamId: '1394873157',
+        idServer: '93608352990363673'
+      }],
+      done: function (error, obj, content) {
+        console.log(error);
+        console.log('标记群组消息已读' + (!error ? '成功' : '失败'));
+      }
+    })
   },
 
   formSubmit: function (e) {

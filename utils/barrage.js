@@ -66,7 +66,7 @@ class Barrage {
     this.initInterval();
     this.load = false;
     this.bulletList = []
-    var i = (messageArr.length > 50) ? messageArr.length - 50 : 0
+    var i = (messageArr.length > 20) ? messageArr.length - 20 : 0
     for (; i < messageArr.length; i++) {
       this.pushBullet(messageArr[i]);
     }
@@ -155,7 +155,7 @@ class Barrage {
         var bullet;
         if (this.newq.isEmpty()) {
           bullet = this.queue.dequeue();
-          bullet.style = bullet.style + "opacity:0.8";
+          bullet.style = bullet.style + "opacity:0.3";
           // bullet.duration += Math.random();
         } else {
           bullet = this.newq.dequeue();

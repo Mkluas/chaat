@@ -54,6 +54,11 @@ function handleMagic(text) {
 	if (!custom.color) {
 		custom.color = randomColor();
 	}
+
+  if (!custom.speed) {
+    custom.speed = Math.random() * 4 - 2;
+  }
+
 	return custom;
 }
 
@@ -85,7 +90,7 @@ function recoverMagicStyle(custom) {
 	var size = custom.size || 0;
 	var color = custom.color || '#6036AA';
 
-	var fontsize = 4 + (size * 0.5);
+	var fontsize = 4 + (size * 1);
 	return "color:"+color+";font-size:" + fontsize + "vh;" + "line-height:" + fontsize + "vh;" + "height:" + fontsize + "vh;"; 
 }
 
