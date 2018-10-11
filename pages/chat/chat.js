@@ -297,13 +297,6 @@ Page({
         }
         self.insertMsg(msg, msg.time);
 
-        request.post({
-          app: app,
-          url: '/ma/group/notice',
-          data: { teamId: self.data.teamId},
-          fail: function () {}
-        })
-
         // 存储到全局 并 存储到最近会话列表中
         self.saveMsgToGlobalAndRecent(msg, {
           from: msg.from,
