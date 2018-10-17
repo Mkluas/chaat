@@ -108,6 +108,7 @@ App({
     } else {
       console.log('shareTicket is null')
       app.globalData.subscriber.emit('TEAM_ID_NOT_FOUND')
+      app.globalData.hasShareTicket = false;
     }
   },
 
@@ -139,6 +140,7 @@ App({
     tokenInfo: {},
     teams: [],
     options: {},
+    hasShareTicket: true,
 
     isLogin: false, // 当前是否是登录状态
     currentChatTo: '', // 记录当前聊天对象account，用于标记聊天时禁止更新最近会话unread

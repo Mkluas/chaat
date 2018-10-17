@@ -11,26 +11,25 @@
   </view>
 
   <view class='bg' bindtap='chatBlur'>
+
     <view class='theme'>
-      <view class='theme-text'>{{theme}}</view>
+      <view wx:if="{{theme.length > 0}}" class='theme-text'>{{theme}}</view>
     </view>
+
     <scroll-view class="msg-list" scroll-y scroll-x="{{false}}" scroll-with-animation scroll-top="{{scrollTop}}">
 
       <view class="{{hidden ? 'barrage' : 'barrage user-input'}}"  wx:if="{{isBarrage}}">
         <view wx:for="{{barrageData}}" wx:key="{{item.id}}" >
           <view id="{{item.id}}" wx:if="{{item.show}}" class="text"
-              style="{{item.style}}; top:{{item.top}}%; animation: first {{item.duration}}s linear forwards;"                
-          >
+              style="{{item.style}}; top:{{item.top}}%; animation: first {{item.duration}}s linear forwards;">
               {{item.text}}
           </view>
         </view>
       </view>
 
-
       <view wx:else>
-        <view class='msg' wx:for="{{messageArr}}" wx:key="{{item.time + item.text}}" >
-          <view class='self-msg' wx:if="{{tools.equals(openid, item.from)}}">{{item.text}}</view>
-          <view wx:else>{{item.text}}</view>
+        <view class='msg' style='top:{{item.top}}vh;left:{{item.left}}vw;' wx:for="{{msgList}}" wx:key="{{item.time + item.text}}" >
+          <view style='{{item.style}}'>{{item.text}}</view>
         </view>
       </view>
 
@@ -38,9 +37,9 @@
   </view>
 
   <view class='btn-block'>
-    <image class='mode' bindtap='changeMode' src='{{modepath}}'></image> 
+    <!-- <image class='mode' bindtap='changeMode' src='{{modepath}}'></image>  -->
     <navigator url='/pages/index/index' open-type='{{back}}' delta="1" >
-      <image src='/images/home.png'></image>  
+      <image src='/images/barrage.png'></image>  
     </navigator>
     <form bindsubmit="formSubmit" report-submit>
     <button formType="submit" class='submit'>

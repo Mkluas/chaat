@@ -648,6 +648,7 @@ export default class IMEventHandler {
     let sessions = obj['msgs']
     for (let i = 0; i < sessions.length; i++) {
       let msg = sessions[i]
+      // console.log(msg);
       // if (msg['scene'] && msg['scene'] !== 'p2p') {
       //   continue;
       // }
@@ -684,7 +685,9 @@ export default class IMEventHandler {
         content: msg['content'] || '',
         tip: msg['tip'] || '',
         custom: msg['custom'] || {},
-        sendOrReceive
+        sendOrReceive,
+        idServer: msg.idServer,
+        idClient: msg.idClient
       }
       app.globalData.rawMessageList[account] = app.globalData.rawMessageList[account] || {}
       app.globalData.rawMessageList[account][msg.time] = deepClone(msg)

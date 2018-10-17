@@ -1,18 +1,20 @@
 const request = require('./request.js')
 
-function requestCover(text, cb) {
+function requestCover(text, cb, mute = false) {
     wx.getImageInfo({
       src: encodeURI("https://molibao.cc/api/cover?text=" + text),
       success: function (res) {
         console.log("Request cover success:", text)
         cb(res.path);
-        wx.hideLoading();
-        wx.showModal({
-          title: "提示",
-          content: "话题更新成功",
-          showCancel: false,
-          confirmText: "确定"
-        })
+        if (!mute) {
+          wx.hideLoading();
+          wx.showModal({
+            title: "提示",
+            content: "话题更新成功",
+            showCancel: false,
+            confirmText: "确定"
+          })
+        }
       },
       fail: function (err) {
         wx.showToast({

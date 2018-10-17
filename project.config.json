@@ -1,7 +1,7 @@
 {
 	"description": "项目配置文件。",
 	"setting": {
-		"urlCheck": false,
+		"urlCheck": true,
 		"es6": true,
 		"postcss": true,
 		"minified": true,
@@ -28,7 +28,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 2,
+			"current": 3,
 			"list": [
 				{
 					"id": -1,
@@ -55,6 +55,13 @@
 					"pathName": "pages/create/create",
 					"query": "",
 					"scene": "1001"
+				},
+				{
+					"id": 3,
+					"name": "template message",
+					"pathName": "pages/chat/chat",
+					"query": "chatTo=1376394292",
+					"scene": "1014"
 				}
 			]
 		}

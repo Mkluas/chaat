@@ -1,4 +1,3 @@
-/* pages/chat/chat.wxss */
 .hide {
   display: none;
 }
@@ -30,13 +29,18 @@
   height: 100vh;
   width: 100vw;
   text-align: center;
+ 
 }
 
 .theme-text {
   margin-top: 10vh;
-  color: #6036AA;
+  /* color: #6036AA; */
   font-size: 6vh;
-  opacity: 0.5;
+  opacity: 0.3;
+  display: inline-block;
+  background-color: #6036AA;
+  padding: 0.5vw 5vw;
+  color: white;
 }
 
 .msg-list {
@@ -46,15 +50,22 @@
   height: 85vh
 }
 
-.user-input {
-  height: 50vh;
-}
-
 .msg {
   padding: 0 5vw;
   margin-bottom: 5px;
   font-size: 4.5vw;
+  /* font-weight: 900; */
+  /* font-style: bold; */
+  font-family: 'fangzheng';
+  
+  display: inline-block;
+  position: absolute;
 }
+
+.user-input {
+  height: 50vh;
+}
+
 
 .barrage {
   z-index: 3;

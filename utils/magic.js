@@ -59,6 +59,13 @@ function handleMagic(text) {
     custom.speed = Math.random() * 4 - 2;
   }
 
+  console.log(custom)
+  if (!custom.size) {
+    console.log('in', custom)
+    custom.size = Math.random() * 8 - 4;
+  }
+  console.log('out', custom)
+
 	return custom;
 }
 
@@ -90,8 +97,23 @@ function recoverMagicStyle(custom) {
 	var size = custom.size || 0;
 	var color = custom.color || '#6036AA';
 
-	var fontsize = 4 + (size * 1);
+  var unit = size >= 0 ? 0.8 : 0.3;
+	var fontsize = 4 + (size * unit);
 	return "color:"+color+";font-size:" + fontsize + "vh;" + "line-height:" + fontsize + "vh;" + "height:" + fontsize + "vh;"; 
+}
+
+function recoverFontSize(custom) {
+  if (typeof custom == 'string') {
+    if (custom.indexOf('{') < 0) {
+      custom = {}
+    } else {
+      custom = JSON.parse(custom)
+    }
+  }
+
+  var size = custom.size || 0;
+  var unit = size >= 0 ? 0.8 : 0.3;
+  return 4 + (size * unit);
 }
 
 function recoverMagicDuration(custom) {
@@ -135,5 +157,6 @@ module.exports = {
 	handleMagic,
 	removeMagicSuffix,
 	recoverMagicStyle,
+  recoverFontSize,
 	recoverMagicDuration
 }

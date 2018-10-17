@@ -1,6 +1,6 @@
 <!--index.wxml-->
 <view class="page">
-  <view class='bg' bindtap='chatBlur'>
+  <view class='bg'>
     <view wx:if="{{teams.length < 1}}">
       <text class='welcome'>欢迎使用 SGNL</text>
     </view>
