@@ -11,41 +11,40 @@ function resetPosition() {
 function setOffsetPageNumber(msg) {
   var location = getCacheLocation(msg);
   if (location) {
-    console.log('set before', offsetPageNumber);
     offsetPageNumber = location.pageNumber;
-    console.log('set after', offsetPageNumber);
   }
 }
 
 function setupMsgPosition(page, msg) {
-  var top;
-  var times=0;
-
   msg.height = msg.fontSize + 2;
   msg.width = msg.fontSize * msg.text.length * page.data.windowRatio + 2;
+  if (msg.width > 90) {
+    console.log('msg.width', msg.width)
+    msg.height = ((msg.width - 0.1) / 90) * msg.height;
+  }
 
-  console.log(msg);
-  var offset = pageNumber * pageHeight;
 
   var location = getCacheLocation(msg);
   if (location) {
     msg.x = msg.left = location.left;
     msg.y = msg.top = location.top - (offsetPageNumber * pageHeight);
     msg.pageNumber = location.pageNumber - offsetPageNumber;
-    console.log(msg.pageNumber)
   } else {
+
+    var top;
+    var times = 0;
+    var offset = pageNumber * pageHeight;
+
     do {
-      if (times++ > 40) {
+      if (times++ > 50) {
         msg.x = msg.left = 0;
         msg.y = msg.top = 0;
         times = 0;
         pageNumber = pageNumber + 1;
         offset = pageNumber * pageHeight;
       }
-      msg.top = random(0 + offset, pageHeight + offset - msg.height);
-      msg.left = random(0, 90 - msg.width);
-      msg.x = msg.left;
-      msg.y = msg.top;
+      msg.y = msg.top = random(0 + offset, pageHeight + offset - msg.height);
+      msg.x = msg.left = random(0, 90 - msg.width);
       msg.pageNumber = pageNumber;
     } while (!hasPosition(page.data.msgList, msg))
   }
