@@ -77,6 +77,21 @@ function updateTheme(app, chatTo, theme) {
     })
 }
 
+function updateThemeCoverPath(app, page) {
+  var chatTo = page.data.chatTo;
+  var self = page;
+  app.getTeams(false, function (teams) {
+    var array = teams.filter((g) => g.team_id == chatTo);
+    if (array.length > 0) {
+      if (array[0].theme === self.data.theme) { return; }
+      self.setData({ theme: array[0].theme })
+      requestCover(array[0].theme, function (path) {
+        self.setData({ coverpath: path });
+      }, true);
+    }
+  });
+}
+
 function startWith(text, prffix) {
   if (text.length < prffix.length) {
     return false;
@@ -98,6 +113,7 @@ function removeThemePrefix(text) {
 
 module.exports = {
     requestCover,
+    updateThemeCoverPath,
     checkSendText,
     removeThemePrefix
 }

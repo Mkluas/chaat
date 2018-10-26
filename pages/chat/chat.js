@@ -4,7 +4,7 @@ import { generateFingerGuessImageFile, generateBigEmojiImageFile, generateRichTe
 import { deepClone, clickLogoJumpToCard } from '../../utils/util.js'
 import * as iconBase64Map from '../../utils/imageBase64.js'
 import { Barrage } from '../../utils/barrage.js'
-import { checkSendText,requestCover } from '../../utils/lang.js'
+import { checkSendText, requestCover, updateThemeCoverPath } from '../../utils/lang.js'
 import { handleMagic, removeMagicSuffix, recoverFontSize, recoverMagicStyle, recoverMagicDuration } from '../../utils/magic.js'
 import { resetPosition, setupMsgPosition, setOffsetPageNumber} from '../../utils/position.js'
 
@@ -19,48 +19,20 @@ Page({
     teamId: 0,
     syncFinish: false,
     scrollTop: 0,
-    isBarrage: false,
-    barrage: {},
-    barrageData: [],
     msgList: [],
-    firstBarrage: true,
     load: false,
-    modepath: '/images/mode.png',
     coverpath: '/images/cover.png',
     theme: 'SGNL',
     back: 'redirect',
     hasFormid: false,
-    hasLoadBarrage: false,
     windowRatio: 1,
-    loadMsgSize: 100,
 
     focus: false,
     hidden: true,
     chatTo: '', //聊天对象
-    chatToLogo: '', // 聊天对象头像
-    loginAccountLogo: '',  // 登录账户对象头像
-    focusFlag: false,//控制输入框失去焦点与否
-    emojiFlag: false,//emoji键盘标志位
-    moreFlag: false, // 更多功能标志
-    tipFlag: false, // tip消息标志
-    tipInputValue: '', // tip消息文本框内容
     sendType: 0, //发送消息类型，0 文本 1 语音
     messageArr: [], //[{text, time, sendOrReceive: 'send', displayTimeHeader, nodes: []},{type: 'geo',geo: {lat,lng,title}}]
     inputValue: '',//文本框输入内容
-  },
-
-  changeMode() {
-    if (this.data.isBarrage) {
-      this.setData({ isBarrage: false, modepath: '/images/mode.png' })
-      this.scrollToBottom();
-      this.barrage.close();
-    } else {
-      this.setData({ isBarrage: true, modepath: '/images/barrage.png' })
-      if (!this.data.hasLoadBarrage) {
-        this.setData({ hasLoadBarrage: true })
-        this.barrage.reload(this.data.messageArr)
-      }
-    }
   },
 
   send: function (e) {
@@ -92,7 +64,7 @@ Page({
       request.post({
         app: app,
         url: '/ma/group/formid',
-        data: { teamId:  self.data.teamId, formId: e.detail.formId },
+        data: {teamId: self.data.teamId, formId: e.detail.formId },
         success: function() {self.setData({hasFormid: true})},
         fail: function () { }
       })
@@ -105,18 +77,11 @@ Page({
     wx.showShareMenu({ withShareTicket: true })
     wx.getSystemInfo({
       success: function (res) {
-        var width = res.windowWidth;
-        var height = res.windowHeight;
-        var windowRatio = height / width;
+        var windowRatio = res.windowHeight / res.windowWidth;
         self.setData({windowRatio: windowRatio })
-        self.barrage = new Barrage((bulletList) => {
-          self.setData({ barrageData: bulletList})
-        }, wx.createSelectorQuery(), width)
       }
     })
-
     resetPosition();
-
     wx.loadFontFace({
       family: 'fangzheng',
       source: 'url("https://molibao.cc/static/font/fangzheng.ttf")',
@@ -157,7 +122,7 @@ Page({
     var self = this;
     self.setData({ hasTeamId: true, teamId: chatTo, chatTo: chatTo });
     if (self.data.syncFinish) {
-      self.getTheme(chatTo)
+      updateThemeCoverPath(app, self)
       self.doLoad({ 'chatTo': chatTo });
     }
   },
@@ -166,7 +131,7 @@ Page({
     var self = this;
     self.setData({ syncFinish: true, openid: app.globalData.tokenInfo.openid })
     if (self.data.hasTeamId) {
-      self.getTheme(self.data.chatTo)
+      updateThemeCoverPath(app, self)
       self.doLoad({'chatTo': self.data.chatTo})
     }
   },
@@ -175,23 +140,6 @@ Page({
     if (!this.data.hasTeamId) {
       wx.redirectTo({ url: '/pages/index/index' });
     }
-  },
-
-  getTheme: function(chatTo) {
-    var self = this;
-    app.getTeams(false, function (teams) {
-      var array = teams.filter((g) => g.team_id == chatTo);
-      if (array.length > 0) {
-        if (array[0].theme === self.data.theme) {
-          console.log('same theme');
-          return;
-        }
-        self.setData({ theme: array[0].theme})
-        requestCover(array[0].theme, function (path) {
-          self.setData({ coverpath: path });
-        }, true);
-      }
-    });
   },
 
   insertMsg: function (msg, time, init) {
@@ -207,17 +155,10 @@ Page({
       sendOrReceive: msg.sendOrReceive,
       nodes: generateRichTextNode(msg.text)
     }
-
     if (init == undefined) {
       setupMsgPosition(this, insertNewMsg);
     }
-    
-    this.setData({
-      messageArr: [...this.data.messageArr, insertNewMsg]
-    })
-    if (this.data.isBarrage) {
-      this.barrage.pushBullet(insertNewMsg);
-    }
+    this.setData({messageArr: [...this.data.messageArr, insertNewMsg]})
   },
 
   pasteWall: function() {
@@ -229,7 +170,6 @@ Page({
         setupMsgPosition(this, this.data.messageArr[i]);
       }
     }
-  
   },
 
   /**
@@ -239,41 +179,35 @@ Page({
     if (this.data.load) { return; }
     this.setData({ load: true });
     console.log('聊天界面', options)
-    let chatWrapperMaxHeight = wx.getSystemInfoSync().windowHeight - 52 - 35
 
     // 初始化聊天对象
-    let self = this,
-      tempArr = [],
-      chatTo = options.chatTo
-    // 更新当前会话对象账户
+    let self = this,tempArr = [],chatTo = options.chatTo
     app.globalData.currentChatTo = chatTo
 
     // 渲染应用期间历史消息
     let loginUserAccount = app.globalData['loginUser']['account']
     let loginMessageList = app.globalData.messageList[loginUserAccount]
+
     if (Object.keys(loginMessageList).length != 0) {
       let chatToMessageList = loginMessageList[chatTo]
       for (let time in chatToMessageList) {
-        // console.log(chatToMessageList[time])
         let msg = chatToMessageList[time];
-        app.globalData.nim.markMsgRead(msg)
-        app.globalData.nim.resetSessionUnread(chatTo + "123");
         if (msg.type === 'text') {
           self.insertMsg(msg, time, true)
         }
       }
     }
-    this.pasteWall();
 
-    this.setData({
-      chatTo,
-      chatWrapperMaxHeight,
-      iconBase64Map: iconBase64Map
-    })
-    // 滚动到底部
+    this.pasteWall();
+    this.setData({iconBase64Map: iconBase64Map})
     self.scrollToBottom()
 
-    // 监听p2p消息
+    self.subscribeNewMsgEvent();
+  },
+
+  // 监听p2p消息
+  subscribeNewMsgEvent() {
+    var self = this;
     app.globalData.subscriber.on('RECEIVE_P2P_MESSAGE', ({ account, time }) => {
       if (self.data.chatTo !== account) {// 非当前聊天人消息
         return
@@ -286,11 +220,10 @@ Page({
         return;
       }
 
-      let displayTimeHeader = ''
       if (newMessage.type === 'text') {
-        this.insertMsg(newMessage, time);
+        self.insertMsg(newMessage, time);
       } else if (newMessage.type === 'custom') {
-        self.getTheme();
+        updateThemeCoverPath(app, self);
       }
 
       // 添加全局数据中 消息时间头，同时存储到最近会话列表中
@@ -302,10 +235,6 @@ Page({
         recentChatList[self.data.chatTo] = {} //存储到最近会话列表中
       }
       chatToAccount = loginMessageList[self.data.chatTo]
-      chatToAccount[time]['displayTimeHeader'] = displayTimeHeader
-      app.globalData.recentChatList[self.data.chatTo][time]['displayTimeHeader'] = displayTimeHeader
-
-      // 滚动到页面底部
       self.scrollToBottom()
     })
   },
@@ -340,7 +269,6 @@ Page({
 
         // 最后一个参数表示，不更新未读数
         app.globalData.subscriber.emit('UPDATE_RECENT_CHAT', { account: msg.to, time: msg.time, text: msg.text, type: msg.type }, true)
-        // 滚动到底部
         self.scrollToBottom()
       }
     })
@@ -357,7 +285,6 @@ Page({
     }
     loginMessageList[self.data.chatTo][msg.time] = data
     app.globalData.recentChatList[self.data.chatTo][msg.time] = data
-
     app.globalData.rawMessageList[self.data.chatTo] = app.globalData.rawMessageList[self.data.chatTo] || {}
     app.globalData.rawMessageList[self.data.chatTo][msg.time] = deepClone(msg)
   },
@@ -367,12 +294,10 @@ Page({
    */
   onShow: function () {
     if (!this.data.load) {
-      wx.showLoading({
-        title: '加载中',
-      });
+      wx.showLoading({title: '加载中'});
     }
     if (app.globalData.login && this.data.hasTeamId) {
-      this.getTheme(this.data.chatTo)
+      updateThemeCoverPath(app, this);
     }
   },
 

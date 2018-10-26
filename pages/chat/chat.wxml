@@ -17,22 +17,11 @@
     </view>
 
     <scroll-view class="msg-list" scroll-y scroll-x="{{false}}" scroll-with-animation scroll-top="{{scrollTop}}">
-
-      <view class="{{hidden ? 'barrage' : 'barrage user-input'}}"  wx:if="{{isBarrage}}">
-        <view wx:for="{{barrageData}}" wx:key="{{item.id}}" >
-          <view id="{{item.id}}" wx:if="{{item.show}}" class="text"
-              style="{{item.style}}; top:{{item.top}}%; animation: first {{item.duration}}s linear forwards;">
-              {{item.text}}
-          </view>
-        </view>
-      </view>
-
-      <view wx:else>
+      <view>
         <view class='msg' style='top:{{item.top}}vh;left:{{item.left}}vw;' wx:for="{{msgList}}" wx:key="{{item.time + item.text}}" >
           <view style='{{item.style}}'>{{item.text}}</view>
         </view>
       </view>
-
     </scroll-view>
   </view>
 
