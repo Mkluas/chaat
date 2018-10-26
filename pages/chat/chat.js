@@ -117,12 +117,12 @@ Page({
 
     resetPosition();
 
-    // wx.loadFontFace({
-    //   family: 'fangzheng',
-    //   source: 'url("https://molibao.cc/static/font/fangzheng.ttf")',
-    //   success: console.log,
-    //   fail: console.log
-    // });
+    wx.loadFontFace({
+      family: 'fangzheng',
+      source: 'url("https://molibao.cc/static/font/fangzheng.ttf")',
+      success: console.log,
+      fail: console.log
+    });
   },
 
   /**
