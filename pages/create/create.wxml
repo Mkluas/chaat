@@ -5,6 +5,7 @@
     <input placeholder="" 
     confirm-type='send'
     bindconfirm='send' 
+    bindblur='send'
     value="{{inputValue}}"  focus="{{focus}}" />
   </view>
 

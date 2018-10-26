@@ -4,10 +4,10 @@ function requestCover(text, cb, mute = false) {
     wx.getImageInfo({
       src: encodeURI("https://molibao.cc/api/cover?text=" + text),
       success: function (res) {
+        wx.hideLoading();
         console.log("Request cover success:", text)
         cb(res.path);
         if (!mute) {
-          wx.hideLoading();
           wx.showModal({
             title: "提示",
             content: "话题更新成功",
@@ -17,6 +17,7 @@ function requestCover(text, cb, mute = false) {
         }
       },
       fail: function (err) {
+        wx.hideLoading();
         wx.showToast({
             title: '网络异常',
             image: '/images/cancel.png'

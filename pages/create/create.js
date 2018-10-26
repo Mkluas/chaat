@@ -31,6 +31,7 @@ Page({
   },
 
   send: function (e) {
+    var self = this;
     var text = e.detail.value;
     var theme = removeThemePrefix(text)
     if (theme.length > 10) {
@@ -40,12 +41,21 @@ Page({
       })
       return;
     }
-    this.setData({ theme: theme});
-    var self = this;
+
+    if (theme === '开始爆料本群的秘密') {
+      self.setData({ theme: theme, cover: "/images/theme.png"});
+      return;
+    }
+
+    if (self.data.theme === theme) {
+      return;
+    }
+
+    self.setData({ theme: theme});
     wx.showLoading({ title: '创建话题' });
     requestCover(theme, function(path){
       self.setData({cover: path})
-    })
+    }, true)
   },
 
   /**
