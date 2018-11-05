@@ -1,7 +1,6 @@
 // pages/chat/chat.js
 const request = require('../../utils/request.js')
-import { generateFingerGuessImageFile, generateBigEmojiImageFile, generateRichTextNode, generateImageNode, calcTimeHeader } from '../../utils/util.js'
-import { deepClone, clickLogoJumpToCard } from '../../utils/util.js'
+import { generateRichTextNode, deepClone } from '../../utils/util.js'
 import * as iconBase64Map from '../../utils/imageBase64.js'
 import { checkSendText, requestCover, updateThemeCoverPath } from '../../utils/lang.js'
 import { handleMagic, removeMagicSuffix, recoverFontSize, recoverMagicStyle, recoverMagicDuration } from '../../utils/magic.js'
@@ -101,12 +100,14 @@ Page({
     if (options.chatTo) {
       self.handleFoundChatTo(options.chatTo);
     } else if (!app.globalData.hasShareTicket) {
+      console.log('has share ticket = ', app.globalData.hasShareTicket)
       self.handleNotFoundChatTo();
     } else {
       app.globalData.subscriber.on('TEAM_ID', (group) => {
         self.handleFoundChatTo(group.teamId);
       });
       app.globalData.subscriber.on('TEAM_ID_NOT_FOUND', () => {
+        console.log('receive team id not found')
         self.handleNotFoundChatTo();
       });
     }
@@ -119,6 +120,7 @@ Page({
   },
 
   handleFoundChatTo: function(chatTo) {
+    console.log('handleFoundChatTo');
     var self = this;
     self.setData({ hasTeamId: true, teamId: chatTo, chatTo: chatTo });
     if (self.data.syncFinish) {
@@ -128,6 +130,7 @@ Page({
   },
 
   handleSyncDone: function() {
+    console.log('handleSyncDone');
     var self = this;
     self.setData({ syncFinish: true, openid: app.globalData.tokenInfo.openid })
     if (self.data.hasTeamId) {
@@ -137,6 +140,7 @@ Page({
   },
 
   handleNotFoundChatTo: function () {
+    console.log('handleNotFoundChatTo')
     if (!this.data.hasTeamId) {
       wx.redirectTo({ url: '/pages/index/index' });
     }
@@ -178,6 +182,7 @@ Page({
   doLoad: function (options) {
     if (this.data.load) { return; }
     this.setData({ load: true });
+    wx.hideLoading();
     console.log('聊天界面', options)
 
     // 初始化聊天对象

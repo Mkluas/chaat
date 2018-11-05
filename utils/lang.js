@@ -84,8 +84,8 @@ function updateThemeCoverPath(app, page) {
   app.getTeams(false, function (teams) {
     var array = teams.filter((g) => g.team_id == chatTo);
     if (array.length > 0) {
-      if (array[0].theme === self.data.theme) { return; }
       self.setData({ theme: array[0].theme })
+      if (array[0].theme === self.data.theme || array[0].theme.length < 1) { return; }
       requestCover(array[0].theme, function (path) {
         self.setData({ coverpath: path });
       }, true);

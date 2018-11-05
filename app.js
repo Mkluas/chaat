@@ -14,6 +14,7 @@ App({
 
   onShow(options) {
     var app = this;
+    console.log('app.onShow options', options)
     app.globalData.options = options;
 
     if (!app.globalData.login) {
@@ -63,6 +64,7 @@ App({
   initEnvAfterEnsureLogin() {
     var app = this;
     app.globalData.login = true;
+    app.globalData.hasShareTicket = true;
     app.globalData.subscriber.emit('APP_LOGIN')
     app.fetchTeamId(app.globalData.options);
     if (app.globalData.isLogin) {
@@ -92,7 +94,7 @@ App({
         shareTicket: options['shareTicket'],
         success: function (res) {
           res['userId'] = options.query['userId'];
-          res['theme'] = options.theme;
+          res['theme'] = options.query['theme'] || '';
           request.post({
             app: app,
             url: "/ma/group/decrypt",
@@ -105,7 +107,10 @@ App({
         }
       })
     } else {
-      console.log('shareTicket is null')
+      console.log('shareTicket is null', options.scene)
+      if (options.scene === 1017) {
+        return;
+      }
       app.globalData.subscriber.emit('TEAM_ID_NOT_FOUND')
       app.globalData.hasShareTicket = false;
     }
