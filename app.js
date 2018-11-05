@@ -9,9 +9,7 @@ App({
   
   onLaunch: function () {
     var app = this;
-    app.globalData.shareTicket = wx.getStorageSync('shareTicket');
     app.globalData.tokenInfo = wx.getStorageSync('tokenInfo');
-    app.globalData.group = wx.getStorageSync('group');
   },
 
   onShow(options) {
@@ -89,6 +87,7 @@ App({
   fetchTeamId(options) {
     var app = this;
     if (options['shareTicket']) {
+      console.log('shareTicket is get')
       wx.getShareInfo({
         shareTicket: options['shareTicket'],
         success: function (res) {

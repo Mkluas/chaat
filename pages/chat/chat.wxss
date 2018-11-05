@@ -6,16 +6,18 @@
   position: fixed;
   top: 20vh;
   width: 100vw;
-  height: 10vh;
+  height: 12vh;
   text-align: center;
   color: #6036AA;
   z-index: 999;
 }
 
-.chat-input input {
-  height: 10vh;
-  line-height: 10vh;
+.chat-input textarea {
+  height: 20vh;
+  line-height: 8vh;
   font-size: 8vh;
+  width: 98vw;
+  padding: 1vw;
 }
 
 .bg {

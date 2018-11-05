@@ -13,7 +13,7 @@ Page({
   data: {
     focus: false,
     hidden: true,
-    inputValue: '$话题$开始爆料本群的秘密',
+    inputValue: '$话题$快来围观群里的爆料',
     theme: "SGNL",
     cover: "/images/theme.png"
   },
@@ -42,7 +42,7 @@ Page({
       return;
     }
 
-    if (theme === '开始爆料本群的秘密') {
+    if (theme === '快来围观群里的爆料') {
       self.setData({ theme: theme, cover: "/images/theme.png"});
       return;
     }
@@ -109,6 +109,12 @@ Page({
       path: '/pages/chat/chat?userId=' + app.globalData.tokenInfo.userId + '&theme=' + this.data.theme,
       imageUrl: this.data.cover,
       success: function () {
+        wx.showModal({
+          title: "提示",
+          content: "话题创建成功，快去群里围观",
+          showCancel: false,
+          confirmText: "确定"
+        })
       }
     }
   }

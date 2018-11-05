@@ -3,7 +3,6 @@ const request = require('../../utils/request.js')
 import { generateFingerGuessImageFile, generateBigEmojiImageFile, generateRichTextNode, generateImageNode, calcTimeHeader } from '../../utils/util.js'
 import { deepClone, clickLogoJumpToCard } from '../../utils/util.js'
 import * as iconBase64Map from '../../utils/imageBase64.js'
-import { Barrage } from '../../utils/barrage.js'
 import { checkSendText, requestCover, updateThemeCoverPath } from '../../utils/lang.js'
 import { handleMagic, removeMagicSuffix, recoverFontSize, recoverMagicStyle, recoverMagicDuration } from '../../utils/magic.js'
 import { resetPosition, setupMsgPosition, setOffsetPageNumber} from '../../utils/position.js'
@@ -39,6 +38,7 @@ Page({
     var text = e.detail.value;
     if (checkSendText(text, this, app, this.data.teamId)) {
       this.sendRequest(text)
+      this.setData({inputValue: '' })
     }
     this.chatBlur();
   },
@@ -53,7 +53,7 @@ Page({
 
   chatBlur: function (e) {
     if (this.data.focus) {
-      this.setData({ focus: false, hidden: true, inputValue: '' })
+      this.setData({ focus: false, hidden: true})
     }
   },
 

@@ -3,8 +3,8 @@
 
   <view class='theme'>
     <input placeholder="" 
-    confirm-type='send'
-    bindconfirm='send' 
+    confirm-type='done'
+    bindconfirm='send'
     bindblur='send'
     value="{{inputValue}}"  focus="{{focus}}" />
   </view>
