@@ -42,7 +42,8 @@ Page({
     this.chatBlur();
   },
 
-  chatInput: function () {
+  chatInput: function (e) {
+    console.log('chat input: ', e);
     this.setData({ focus: true, hidden: false, scrollTop: 10000 })
   },
 
@@ -51,8 +52,9 @@ Page({
   },
 
   chatBlur: function (e) {
+    console.log('chat blur: ', e);
     if (this.data.focus) {
-      this.setData({ focus: false, hidden: true})
+      this.setData({ hidden: true, focus: false})
     }
   },
 

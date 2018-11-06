@@ -27,13 +27,13 @@ function requestCover(text, cb, mute = false) {
 }
 
 function checkSendText(text, page, app, teamId) {
-    if (text.length > 30) {
-      wx.showToast({
-        title: '长度不能大于30',
-        image: '/images/cancel.png'
-      })
-      return false;
-    }
+    // if (text.length > 300) {
+    //   wx.showToast({
+    //     title: '长度不能大于300',
+    //     image: '/images/cancel.png'
+    //   })
+    //   return false;
+    // }
 
     if (startWith(text, '$话题$')) {
       var covertext = removeStart(text, '$话题$')

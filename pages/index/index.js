@@ -20,6 +20,18 @@ Page({
     })
   },
 
+  deleteTeam: function() {
+    console.log('delete team');
+  },
+
+  switchChat: function(e) {
+    console.log(e.currentTarget.dataset)
+    var url = e.currentTarget.dataset.url;
+    wx.navigateTo({
+      url: url,
+    })
+  },
+
   onShow: function() {
     var self = this;
     if (app.globalData.login) {

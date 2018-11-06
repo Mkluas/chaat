@@ -2,7 +2,7 @@ var rects = [];
 var pageNumber = 0;
 var offsetPageNumber = 0;
 var locations = {}
-var pageHeight = 80;
+var pageHeight = 100;
 
 function resetPosition() {
   pageNumber = 0;
@@ -36,7 +36,7 @@ function setupMsgPosition(page, msg) {
     var offset = pageNumber * pageHeight;
 
     do {
-      if (times++ > 50) {
+      if (times++ > 80) {
         msg.x = msg.left = 0;
         msg.y = msg.top = 0;
         times = 0;

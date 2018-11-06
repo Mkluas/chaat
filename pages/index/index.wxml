@@ -6,11 +6,13 @@
     </view>
 
     <view class='team-list'  wx:else>
-      <navigator wx:for="{{teams}}" wx:key="{{item.team_id}}" class='team' url="/pages/chat/chat?back=true&chatTo={{item.team_id}}">
-        <view class='groupName'>
-          <open-data type="groupName" open-gid="{{item.group_id}}" />
-        </view>
-      </navigator>
+      <view wx:for="{{teams}}" wx:key="{{item.team_id}}" >
+        <!-- <swipper-item bind:deleteChatItem='deleteTeam' > -->
+          <view bindtap='switchChat' class='groupName team' data-url="/pages/chat/chat?back=true&chatTo={{item.team_id}}">
+            <open-data type="groupName" open-gid="{{item.group_id}}" />
+          </view>
+        <!-- </swipper-item> -->
+      </view>
     </view>
   </view>
  

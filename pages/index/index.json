@@ -1,1 +1,5 @@
-{}
+{
+  "usingComponents": {
+    "swipper-item": "/components/swipedelete/swipedelete"
+  }
+}
