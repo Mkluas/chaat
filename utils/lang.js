@@ -38,6 +38,15 @@ function checkSendText(text, page, app, teamId) {
     if (startWith(text, '$话题$')) {
       var covertext = removeStart(text, '$话题$')
       if (covertext.length > 0) {
+
+        if(covertext.length > 18) {
+          wx.showToast({
+            title: '长度不能大于18',
+            image: '/images/cancel.png'
+          })
+          return;
+        }
+
         wx.showLoading({title: '更新话题'});
         requestCover(covertext, function(path) {
           page.setData({coverpath: path, theme: covertext});

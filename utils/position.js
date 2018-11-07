@@ -36,7 +36,7 @@ function setupMsgPosition(page, msg) {
     var offset = pageNumber * pageHeight;
 
     do {
-      if (times++ > 80) {
+      if (times++ > 100) {
         msg.x = msg.left = 0;
         msg.y = msg.top = 0;
         times = 0;

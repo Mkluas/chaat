@@ -37,6 +37,10 @@
   min-height: 100vh;
 }
 
+.bg-blur {
+  opacity: 0.3;
+}
+
 .theme {
   position: fixed;
   z-index: 0;
@@ -51,6 +55,7 @@
   font-size: 6vh;
   opacity: 0.3;
   display: inline-block;
+  font-family: 'kongxin';
   background-color: #6036AA;
   padding: 0.5vw 5vw;
   color: white;

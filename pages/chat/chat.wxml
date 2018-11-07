@@ -12,7 +12,7 @@
     value="{{inputValue}}" focus="{{focus}}" />
   </view>
 
-  <view class='bg' bindtap='chatBlur'>
+  <view bindtap='chatBlur' class="{{hidden ? 'bg' : 'bg bg-blur'}}">
 
     <view class='theme'>
       <view wx:if="{{theme.length > 0}}" class='theme-text'>{{theme}}</view>
