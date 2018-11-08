@@ -59,12 +59,9 @@ function handleMagic(text) {
     custom.speed = Math.random() * 4 - 2;
   }
 
-  console.log(custom)
   if (!custom.size) {
-    console.log('in', custom)
     custom.size = Math.random() * 8 - 4;
   }
-  console.log('out', custom)
 
 	return custom;
 }

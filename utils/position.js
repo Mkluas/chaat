@@ -19,7 +19,6 @@ function setupMsgPosition(page, msg) {
   msg.height = msg.fontSize + 2;
   msg.width = msg.fontSize * msg.text.length * page.data.windowRatio + 2;
   if (msg.width > 90) {
-    console.log('msg.width', msg.width)
     msg.height = ((msg.width - 0.1) / 90) * msg.height;
   }
 
@@ -29,6 +28,10 @@ function setupMsgPosition(page, msg) {
     msg.x = msg.left = location.left;
     msg.y = msg.top = location.top - (offsetPageNumber * pageHeight);
     msg.pageNumber = location.pageNumber - offsetPageNumber;
+    if (pageNumber < msg.pageNumber) {
+      pageNumber = msg.pageNumber;
+      page.setData({ msgListHeight: pageNumber * 100 + 100 })
+    }
   } else {
 
     var top;
@@ -42,6 +45,7 @@ function setupMsgPosition(page, msg) {
         times = 0;
         pageNumber = pageNumber + 1;
         offset = pageNumber * pageHeight;
+        page.setData({msgListHeight: offset + 100})
       }
       msg.y = msg.top = random(0 + offset, pageHeight + offset - msg.height);
       msg.x = msg.left = random(0, 90 - msg.width);
@@ -65,13 +69,15 @@ function hasPosition(list, msg) {
 
 function saveLocation(msg) {
   var location = {"pageNumber": msg.pageNumber, "top": msg.top, "left": msg.left}
-  var key = msg.from + msg.time;
-  locations[key] = location;
+  locations[getKey(msg)] = location;
+}
+
+function getKey(msg) {
+  return msg.form + msg.time + (msg.text > 10 ? msg.text.substring(0,10) : msg.text)
 }
 
 function getCacheLocation(msg) {
-  var key = msg.from + msg.time;
-  var location = locations[key];
+  var location = locations[getKey(msg)];
   return location;
 }
 

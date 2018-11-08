@@ -24,6 +24,7 @@ Page({
     back: 'redirect',
     hasFormid: false,
     windowRatio: 1,
+    msgListHeight: 100,
 
     focus: false,
     hidden: true,
@@ -43,7 +44,6 @@ Page({
   },
 
   chatInput: function (e) {
-    console.log('chat input: ', e);
     this.setData({ focus: true, hidden: false, scrollTop: 10000 })
   },
 
@@ -52,7 +52,6 @@ Page({
   },
 
   chatBlur: function (e) {
-    console.log('chat blur: ', e);
     if (this.data.focus) {
       this.setData({ hidden: true, focus: false})
     }
@@ -89,12 +88,12 @@ Page({
       success: console.log,
       fail: console.log
     });
-    wx.loadFontFace({
-      family: 'kongxin',
-      source: 'url("https://molibao.cc/static/font/kongxin.ttf")',
-      success: console.log,
-      fail: console.log
-    });
+    // wx.loadFontFace({
+    //   family: 'kongxin',
+    //   source: 'url("https://molibao.cc/static/font/kongxin.ttf")',
+    //   success: console.log,
+    //   fail: console.log
+    // });
   },
 
   /**
@@ -174,6 +173,7 @@ Page({
   },
 
   pasteWall: function() {
+    wx.showLoading({ title: '加载记录' });
     if (this.data.messageArr.length > 0) {
       var loadSize = 100;
       var i = (this.data.messageArr.length > loadSize) ? this.data.messageArr.length - loadSize : 0
@@ -182,6 +182,7 @@ Page({
         setupMsgPosition(this, this.data.messageArr[i]);
       }
     }
+    wx.hideLoading();
   },
 
   /**
