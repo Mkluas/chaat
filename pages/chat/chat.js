@@ -88,12 +88,6 @@ Page({
       success: console.log,
       fail: console.log
     });
-    // wx.loadFontFace({
-    //   family: 'kongxin',
-    //   source: 'url("https://molibao.cc/static/font/kongxin.ttf")',
-    //   success: console.log,
-    //   fail: console.log
-    // });
   },
 
   /**

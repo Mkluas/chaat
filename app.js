@@ -25,6 +25,7 @@ App({
               app: app,
               url: "/ma/user/token/check",
               success: function () {
+                app.globalData.login = true;
                 app.initEnvAfterEnsureLogin();
               }
             });
@@ -51,6 +52,7 @@ App({
           loadingText: "正在登录",
           data: { "code": res.code },
           success: function (data) {
+            app.globalData.login = true;
             app.globalData.tokenInfo = data;
             wx.setStorage({key: 'tokenInfo',data: data})
             app.initEnvAfterEnsureLogin();
@@ -63,12 +65,11 @@ App({
 
   initEnvAfterEnsureLogin() {
     var app = this;
-    app.globalData.login = true;
     app.globalData.hasShareTicket = true;
     app.globalData.subscriber.emit('APP_LOGIN')
     app.fetchTeamId(app.globalData.options);
     if (app.globalData.isLogin) {
-      console.log('already login, send sync_done')
+      console.log('already login NIM, send sync_done')
       app.globalData.subscriber.emit('SYNC_DONE', {})
     } else {
       console.log('already login app, do login NIM')
@@ -102,6 +103,7 @@ App({
             success: function (d) {
               app.globalData.group = d.group;
               app.globalData.subscriber.emit('TEAM_ID', app.globalData.group)
+              app.getTeams(true);
             }
           })
         }
@@ -139,6 +141,7 @@ App({
   onError(err) {
     console.log('小程序出错了', err)
   },
+
   globalData:{
     login: false,
     tokenInfo: {},

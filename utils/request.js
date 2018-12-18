@@ -1,4 +1,4 @@
-const host = "https://molibao.cc"
+const host = "https://sgnl.j-a-m-a.com"
 // const host = "http://localhost:9000";
 
 const request = options => {

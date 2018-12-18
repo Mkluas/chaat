@@ -6,12 +6,24 @@
     </view>
 
     <view class='team-list'  wx:else>
-      <view wx:for="{{teams}}" wx:key="{{item.team_id}}" >
-        <!-- <swipper-item bind:deleteChatItem='deleteTeam' > -->
-          <view bindtap='switchChat' class='groupName team' data-url="/pages/chat/chat?back=true&chatTo={{item.team_id}}">
-            <open-data type="groupName" open-gid="{{item.group_id}}" />
-          </view>
-        <!-- </swipper-item> -->
+      <view class='item' wx:for="{{teams}}" wx:key="{{item.team_id}}" >
+
+        <movable-area>
+          <movable-view out-of-bounds="true" direction="horizontal" x="{{item.xmove}}"
+            inertia="true"
+            data-productIndex="{{index}}"
+            bindtouchstart="handleTouchStart"
+            bindtouchend="handleTouchEnd"
+            bindchange="handleMovableChange">
+            
+            <view bindtap='switchChat' class='item-wrap' data-url="/pages/chat/chat?back=true&chatTo={{item.team_id}}">
+              <open-data type="groupName" open-gid="{{item.group_id}}" />
+            </view>
+      
+          </movable-view>
+        </movable-area>
+        <view class="delete-btn" data-id="{{item.id}}" bindtap="handleDeleteItem">删除</view>
+
       </view>
     </view>
   </view>

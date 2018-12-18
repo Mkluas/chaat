@@ -20,6 +20,7 @@
   width: 100vw;
   text-align: center;
   color: #6036AA;
+  z-index: 99;
 }
 
 .create {
@@ -28,17 +29,50 @@
   left: 42.5vw;
   width: 15vw;
   height: 15vw;
+   z-index: 999;
 }
 
 .team-list {
   border-top: 1px solid #f0f0f0;
   margin-bottom: 20vh;
 }
-.team {
-  padding: 18px 20px;
-  height: 26px;
+
+
+.item {
+  position: relative;
+  width: 100vw;
   border-bottom: 1px solid #f0f0f0;
+  z-index: 99;
 }
-.groupName {
+
+.item-wrap {
+  padding: 18px 20px;
   font-size: 18px;
+}
+
+.item movable-area {
+  height: 60px;
+  width: calc(100vw - 180rpx);
+}
+
+.item movable-view {
+  height: 60px;
+  width: 100vw;
+  background: #fff;
+  z-index: 99;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0; 
+  width: 180rpx;
+  font-family: PingFangSC-Regular;
+  font-size: 18px;
+  color: #FFFFFF;
+  line-height: 60px;
+  z-index: 1;
+  background: red;
+  text-align: center;
 }
